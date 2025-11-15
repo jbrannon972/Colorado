@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { Icons } from '../ui';
 
@@ -37,58 +38,62 @@ export const HamburgerMenu: React.FC = () => {
         <Icons.Menu size={24} className="text-frost-white" />
       </button>
 
-      {/* Overlay - Behind menu */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-deep-navy bg-opacity-60 z-[60] transition-menu backdrop-blur-sm"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
-      {/* Menu Panel - Slides from the right, native iOS feel */}
-      <div
-        className={`
-          fixed top-0 right-0 h-full bg-gradient-to-b from-icy-blue to-deep-navy
-          z-[70] transition-menu w-72 shadow-2xl safe-top safe-bottom
-          ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-        `}
-        style={{ boxShadow: '-4px 0 20px rgba(0, 0, 0, 0.3)' }}
-      >
-        {/* Header - Minimal */}
-        <div className="flex items-center justify-between px-md py-md border-b border-pale-ice border-opacity-10">
-          <h2 className="text-h2 text-frost-white font-bold">Lake Dillon</h2>
-          <button
+      {/* Portal the overlay and menu to document body for true overlay */}
+      {isOpen && createPortal(
+        <>
+          {/* Overlay - Behind menu */}
+          <div
+            className="fixed inset-0 bg-deep-navy bg-opacity-60 z-[60] transition-menu backdrop-blur-sm"
             onClick={() => setIsOpen(false)}
-            className="flex items-center justify-center w-10 h-10 touch-opacity"
-            aria-label="Close menu"
+          />
+
+          {/* Menu Panel - Slides from the right, native iOS feel */}
+          <div
+            className={`
+              fixed top-0 right-0 h-full bg-gradient-to-b from-icy-blue to-deep-navy
+              z-[70] transition-menu w-72 shadow-2xl safe-top safe-bottom
+              ${isOpen ? 'translate-x-0' : 'translate-x-full'}
+            `}
+            style={{ boxShadow: '-4px 0 20px rgba(0, 0, 0, 0.3)' }}
           >
-            <Icons.X size={20} className="text-frost-white" />
-          </button>
-        </div>
-
-        {/* Menu Items - Clean list */}
-        <nav className="flex-1 py-sm">
-          {menuItems.map((item) => {
-            const IconComponent = Icons[item.icon];
-            return (
+            {/* Header - Minimal */}
+            <div className="flex items-center justify-between px-md py-md border-b border-pale-ice border-opacity-10">
+              <h2 className="text-h2 text-frost-white font-bold">Lake Dillon</h2>
               <button
-                key={item.path}
-                onClick={() => handleNavigate(item.path)}
-                className="w-full flex items-center gap-3 px-md py-3 transition-smooth text-left touch-opacity active:bg-deep-navy active:bg-opacity-30"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center justify-center w-10 h-10 touch-opacity"
+                aria-label="Close menu"
               >
-                <IconComponent size={20} className="text-accent-blue" />
-                <span className="text-body text-frost-white">{item.label}</span>
+                <Icons.X size={20} className="text-frost-white" />
               </button>
-            );
-          })}
-        </nav>
+            </div>
 
-        {/* Trip Info at bottom - Compact */}
-        <div className="px-md py-md border-t border-pale-ice border-opacity-10 bg-deep-navy bg-opacity-20">
-          <p className="text-body-compact text-pale-ice">Thanksgiving 2025</p>
-          <p className="text-label text-accent-blue mt-1">Nov 20-28 • 8 Days</p>
-        </div>
-      </div>
+            {/* Menu Items - Clean list */}
+            <nav className="flex-1 py-sm">
+              {menuItems.map((item) => {
+                const IconComponent = Icons[item.icon];
+                return (
+                  <button
+                    key={item.path}
+                    onClick={() => handleNavigate(item.path)}
+                    className="w-full flex items-center gap-3 px-md py-3 transition-smooth text-left touch-opacity active:bg-deep-navy active:bg-opacity-30"
+                  >
+                    <IconComponent size={20} className="text-accent-blue" />
+                    <span className="text-body text-frost-white">{item.label}</span>
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Trip Info at bottom - Compact */}
+            <div className="px-md py-md border-t border-pale-ice border-opacity-10 bg-deep-navy bg-opacity-20">
+              <p className="text-body-compact text-pale-ice">Thanksgiving 2025</p>
+              <p className="text-label text-accent-blue mt-1">Nov 20-28 • 8 Days</p>
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
     </>
   );
 };
