@@ -1,0 +1,168 @@
+@import "tailwindcss";
+
+/* Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@theme {
+  /* Custom Colors */
+  --color-deep-navy: #0A1929;
+  --color-icy-blue: #1A3A52;
+  --color-frost-white: #E8F0F7;
+  --color-accent-blue: #4DB8E8;
+  --color-pale-ice: #B3D9F0;
+  --color-success-teal: #6BA8A8;
+  --color-warning-brown: #8B7A6B;
+  --color-error-rose: #A67C7C;
+  --color-info-slate: #7A9BB8;
+}
+
+@layer base {
+  :root {
+    /* Additional CSS variables */
+    --color-bg-primary: #0A1929;
+    --color-bg-secondary: #1A3A52;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    overflow-x: hidden;
+  }
+
+  /* Dark mode only - no light mode */
+  html, body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+  }
+}
+
+@layer components {
+  /* Button Styles */
+  .btn-primary {
+    background-color: var(--color-accent-blue);
+    color: var(--color-frost-white);
+    height: 36px;
+    padding: 0 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 150ms ease-in-out;
+  }
+
+  .btn-primary:hover {
+    background-color: #5DC9F8;
+  }
+
+  .btn-primary:active {
+    background-color: #3CA8D8;
+  }
+
+  .btn-primary:disabled {
+    background-color: var(--color-pale-ice);
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    border: 1px solid var(--color-accent-blue);
+    color: var(--color-accent-blue);
+    background: transparent;
+    height: 36px;
+    padding: 0 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 150ms ease-in-out;
+  }
+
+  .btn-secondary:hover {
+    background-color: rgba(77, 184, 232, 0.1);
+  }
+
+  .btn-compact {
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+
+  /* Card Styles */
+  .card {
+    background-color: var(--color-icy-blue);
+    border: 1px solid rgba(179, 217, 240, 0.2);
+    border-radius: 4px;
+    padding: 12px;
+  }
+
+  /* Input Styles */
+  .input {
+    height: 40px;
+    background-color: var(--color-icy-blue);
+    border: 1px solid rgba(179, 217, 240, 0.3);
+    color: var(--color-frost-white);
+    padding: 0 12px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .input::placeholder {
+    color: var(--color-pale-ice);
+    opacity: 0.5;
+  }
+
+  /* Container */
+  .container-mobile {
+    max-width: 425px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+}
+
+@layer utilities {
+  /* Typography utilities */
+  .text-h1 {
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  .text-h2 {
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+
+  .text-h3 {
+    font-size: 16px;
+    line-height: 1.25;
+    font-weight: 600;
+  }
+
+  /* Animations */
+  .transition-smooth {
+    transition: all 150ms ease-in-out;
+  }
+
+  .transition-menu {
+    transition: all 250ms ease-in-out;
+  }
+
+  .transition-card {
+    transition: all 200ms ease-out;
+  }
+
+  /* Touch feedback */
+  .touch-opacity {
+    @apply active:opacity-85;
+  }
+}
