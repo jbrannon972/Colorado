@@ -9,9 +9,9 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children, title, rightAction }) => {
   return (
-    <div className="min-h-screen bg-deep-navy">
+    <div className="min-h-screen bg-deep-navy flex flex-col">
       <TopNav title={title} rightAction={rightAction} />
-      <main className="container-mobile py-lg">
+      <main className="flex-1 container-mobile py-lg safe-bottom">
         {children}
       </main>
     </div>
