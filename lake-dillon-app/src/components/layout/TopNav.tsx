@@ -8,7 +8,7 @@ interface TopNavProps {
 
 export const TopNav: React.FC<TopNavProps> = ({ title, rightAction }) => {
   return (
-    <div className="sticky top-0 z-30 bg-deep-navy border-b border-pale-ice border-opacity-20 safe-top">
+    <div className="sticky top-0 z-50 bg-deep-navy border-b border-pale-ice border-opacity-20 safe-top">
       <div className="h-nav px-md flex items-center justify-between">
         {/* Left: Title or Spacer */}
         {title ? (

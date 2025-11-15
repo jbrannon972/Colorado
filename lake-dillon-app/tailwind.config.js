@@ -16,7 +16,7 @@ export default {
 
         // Functional Colors
         'success-teal': '#6BA8A8',
-        'warning-brown': '#8B7A6B',
+        'warning-amber': '#FDB022',
         'error-rose': '#A67C7C',
         'info-slate': '#7A9BB8',
       },

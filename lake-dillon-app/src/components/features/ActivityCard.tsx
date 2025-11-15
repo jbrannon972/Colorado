@@ -54,8 +54,8 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <Icons.Pregnant size={16} className={activity.pregnancySafe ? 'text-success-teal' : 'text-warning-brown'} />
-          <span className={activity.pregnancySafe ? 'text-success-teal' : 'text-warning-brown'}>
+          <Icons.Pregnant size={16} className={activity.pregnancySafe ? 'text-success-teal' : 'text-warning-amber'} />
+          <span className={activity.pregnancySafe ? 'text-success-teal' : 'text-warning-amber'}>
             {activity.pregnancySafe ? 'Pregnancy-safe' : 'Check restrictions'}
           </span>
         </div>
@@ -72,9 +72,9 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
 
       {/* Seasonal Notes */}
       {activity.seasonalNotes && (
-        <div className="flex items-center gap-2 text-label text-warning-brown bg-warning-brown bg-opacity-10 px-2 py-1 rounded-subtle">
+        <div className="flex items-center gap-2 text-label text-warning-amber bg-warning-amber bg-opacity-10 px-2 py-1 rounded-subtle">
           <Icons.Warning size={14} />
-          <span>{activity.seasonalNotes}</span>
+          <span className="font-semibold">{activity.seasonalNotes}</span>
         </div>
       )}
 

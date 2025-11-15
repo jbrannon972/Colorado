@@ -37,10 +37,10 @@ export const HamburgerMenu: React.FC = () => {
         <Icons.Menu size={24} className="text-frost-white" />
       </button>
 
-      {/* Overlay */}
+      {/* Overlay - Behind menu */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-deep-navy bg-opacity-60 z-40 transition-menu backdrop-blur-sm"
+          className="fixed inset-0 bg-deep-navy bg-opacity-60 z-[60] transition-menu backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -49,7 +49,7 @@ export const HamburgerMenu: React.FC = () => {
       <div
         className={`
           fixed top-0 right-0 h-full bg-gradient-to-b from-icy-blue to-deep-navy
-          z-50 transition-menu w-72 shadow-2xl safe-top safe-bottom
+          z-[70] transition-menu w-72 shadow-2xl safe-top safe-bottom
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
         `}
         style={{ boxShadow: '-4px 0 20px rgba(0, 0, 0, 0.3)' }}
