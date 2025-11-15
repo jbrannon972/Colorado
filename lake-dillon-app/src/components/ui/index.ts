@@ -4,3 +4,4 @@ export { Input, Select } from './Input';
 export { Icons, Icon } from './Icons';
 export { Chip } from './Chip';
 export { Toast } from './Toast';
+export { DatePicker } from './DatePicker';

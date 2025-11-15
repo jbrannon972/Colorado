@@ -8,17 +8,20 @@ interface TopNavProps {
 
 export const TopNav: React.FC<TopNavProps> = ({ title, rightAction }) => {
   return (
-    <div className="sticky top-0 z-30 bg-deep-navy border-b border-pale-ice border-opacity-20">
-      <div className="h-nav container-mobile flex items-center justify-between">
-        {/* Left: Hamburger Menu */}
-        <HamburgerMenu />
+    <div className="sticky top-0 z-30 bg-deep-navy border-b border-pale-ice border-opacity-20 safe-top">
+      <div className="h-nav px-md flex items-center justify-between">
+        {/* Left: Title or Spacer */}
+        {title ? (
+          <h2 className="text-h2 text-frost-white">{title}</h2>
+        ) : (
+          <div className="w-10"></div>
+        )}
 
-        {/* Center: Title (optional) */}
-        {title && <h2 className="text-h2 text-frost-white">{title}</h2>}
-
-        {/* Right: Action (optional) */}
-        {rightAction && <div>{rightAction}</div>}
-        {!rightAction && <div className="w-10"></div>} {/* Spacer for alignment */}
+        {/* Right: Hamburger Menu and optional action */}
+        <div className="flex items-center gap-2">
+          {rightAction && <div>{rightAction}</div>}
+          <HamburgerMenu />
+        </div>
       </div>
     </div>
   );

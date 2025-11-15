@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Layout } from '../components/layout';
 import { TimelineDay } from '../components/features/TimelineDay';
 import { MealPlanningModal } from '../components/features/MealPlanningModal';
-import { Chip } from '../components/ui';
+import { DatePicker } from '../components/ui';
 import { initialTimeline } from '../data/timeline';
 import type { TimeSlotType, Restaurant } from '../types';
 
@@ -56,19 +56,12 @@ export const TimelinePage: React.FC = () => {
           </p>
         </div>
 
-        {/* Day Selector */}
-        <div className="overflow-x-auto pb-2 -mx-lg px-lg">
-          <div className="flex gap-2 min-w-max">
-            {initialTimeline.map((day, index) => (
-              <Chip
-                key={day.date}
-                label={`${day.dayName.substring(0, 3)} ${new Date(day.date + 'T12:00:00').getDate()}`}
-                selected={selectedDayIndex === index}
-                onClick={() => handleDayChange(index)}
-              />
-            ))}
-          </div>
-        </div>
+        {/* Date Selector */}
+        <DatePicker
+          dates={initialTimeline.map((day) => ({ date: day.date, dayName: day.dayName }))}
+          selectedIndex={selectedDayIndex}
+          onSelectDate={handleDayChange}
+        />
 
         {/* Selected Day Timeline */}
         <div
