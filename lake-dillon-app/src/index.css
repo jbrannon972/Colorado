@@ -34,9 +34,6 @@
     overflow-x: hidden;
     overscroll-behavior: none;
     width: 100%;
-    /* Enable hardware acceleration */
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
   }
 
   html, body, #root {

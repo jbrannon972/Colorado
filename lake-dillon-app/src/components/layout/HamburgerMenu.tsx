@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { Icons } from '../ui';
@@ -21,23 +21,170 @@ const menuItems: MenuItem[] = [
 export const HamburgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const portalContainerRef = useRef<HTMLDivElement | null>(null);
 
-  // Prevent body scroll when menu is open
+  // Create dedicated portal container and lock body scroll
   useEffect(() => {
     if (isOpen) {
+      // Create a dedicated container for the portal
+      const portalDiv = document.createElement('div');
+      portalDiv.id = 'hamburger-menu-portal';
+      portalDiv.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; z-index: 999999 !important; pointer-events: none !important;';
+      document.body.appendChild(portalDiv);
+      portalContainerRef.current = portalDiv;
+
+      // Lock body scroll
       document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = '0';
+
+      return () => {
+        // Cleanup
+        if (portalContainerRef.current) {
+          document.body.removeChild(portalContainerRef.current);
+          portalContainerRef.current = null;
+        }
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.top = '';
+      };
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
   }, [isOpen]);
 
   const handleNavigate = (path: string) => {
     navigate(path);
     setIsOpen(false);
   };
+
+  const menuContent = isOpen ? (
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 999999,
+        pointerEvents: 'auto',
+      }}
+    >
+      {/* Backdrop */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(10, 25, 41, 0.6)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+        }}
+        onClick={() => setIsOpen(false)}
+      />
+
+      {/* Menu Panel */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          bottom: 0,
+          width: '288px',
+          maxWidth: '80vw',
+          background: 'linear-gradient(to bottom, #1E4A68, #0A1929)',
+          boxShadow: '-4px 0 20px rgba(0, 0, 0, 0.5)',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '16px',
+            paddingTop: 'max(16px, env(safe-area-inset-top))',
+            borderBottom: '1px solid rgba(179, 217, 240, 0.1)',
+          }}
+        >
+          <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#FFFFFF' }}>
+            Lake Dillon
+          </h2>
+          <button
+            onClick={() => setIsOpen(false)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+            aria-label="Close menu"
+          >
+            <Icons.X size={20} style={{ color: '#FFFFFF' }} />
+          </button>
+        </div>
+
+        {/* Menu Items */}
+        <nav style={{ flex: 1, paddingTop: '8px', paddingBottom: '8px' }}>
+          {menuItems.map((item) => {
+            const IconComponent = Icons[item.icon];
+            return (
+              <button
+                key={item.path}
+                onClick={() => handleNavigate(item.path)}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 16px',
+                  background: 'none',
+                  border: 'none',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  transition: 'background-color 150ms ease',
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(10, 25, 41, 0.3)';
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                <IconComponent size={20} style={{ color: '#4DB8E8' }} />
+                <span style={{ fontSize: '15px', color: '#FFFFFF' }}>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Trip Info */}
+        <div
+          style={{
+            padding: '16px',
+            paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+            borderTop: '1px solid rgba(179, 217, 240, 0.1)',
+            backgroundColor: 'rgba(10, 25, 41, 0.2)',
+          }}
+        >
+          <p style={{ fontSize: '13px', color: '#B3D9F0' }}>Thanksgiving 2025</p>
+          <p style={{ fontSize: '11px', color: '#4DB8E8', marginTop: '4px' }}>
+            Nov 20-28 • 8 Days
+          </p>
+        </div>
+      </div>
+    </div>
+  ) : null;
 
   return (
     <>
@@ -50,80 +197,8 @@ export const HamburgerMenu: React.FC = () => {
         <Icons.Menu size={24} className="text-frost-white" />
       </button>
 
-      {/* Portal the menu overlay to body */}
-      {isOpen && createPortal(
-        <div className="fixed inset-0 z-[9999]" style={{ position: 'fixed' }}>
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-deep-navy bg-opacity-60 backdrop-blur-sm"
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              transition: 'opacity 250ms ease',
-            }}
-            onClick={() => setIsOpen(false)}
-          />
-
-          {/* Menu Panel */}
-          <div
-            className="absolute top-0 right-0 h-full w-72 bg-gradient-to-b from-icy-blue to-deep-navy shadow-2xl"
-            style={{
-              position: 'fixed',
-              top: 0,
-              right: 0,
-              bottom: 0,
-              width: '288px',
-              maxWidth: '80vw',
-              transform: 'translateX(0)',
-              transition: 'transform 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-              boxShadow: '-4px 0 20px rgba(0, 0, 0, 0.3)',
-              overflowY: 'auto',
-              WebkitOverflowScrolling: 'touch',
-            }}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between px-md py-md border-b border-pale-ice border-opacity-10"
-                 style={{ paddingTop: 'max(16px, env(safe-area-inset-top))' }}>
-              <h2 className="text-h2 text-frost-white font-bold">Lake Dillon</h2>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center w-10 h-10 touch-opacity"
-                aria-label="Close menu"
-              >
-                <Icons.X size={20} className="text-frost-white" />
-              </button>
-            </div>
-
-            {/* Menu Items */}
-            <nav className="flex-1 py-sm">
-              {menuItems.map((item) => {
-                const IconComponent = Icons[item.icon];
-                return (
-                  <button
-                    key={item.path}
-                    onClick={() => handleNavigate(item.path)}
-                    className="w-full flex items-center gap-3 px-md py-3 transition-smooth text-left touch-opacity active:bg-deep-navy active:bg-opacity-30"
-                  >
-                    <IconComponent size={20} className="text-accent-blue" />
-                    <span className="text-body text-frost-white">{item.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-
-            {/* Trip Info */}
-            <div className="px-md py-md border-t border-pale-ice border-opacity-10 bg-deep-navy bg-opacity-20"
-                 style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}>
-              <p className="text-body-compact text-pale-ice">Thanksgiving 2025</p>
-              <p className="text-label text-accent-blue mt-1">Nov 20-28 • 8 Days</p>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
+      {/* Portal to dedicated container */}
+      {portalContainerRef.current && menuContent && createPortal(menuContent, portalContainerRef.current)}
     </>
   );
 };
