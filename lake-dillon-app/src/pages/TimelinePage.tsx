@@ -13,6 +13,17 @@ export const TimelinePage: React.FC = () => {
     date: string;
     slot: TimeSlotType;
   } | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const handleDayChange = (newIndex: number) => {
+    if (newIndex === selectedDayIndex) return;
+
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setSelectedDayIndex(newIndex);
+      setIsTransitioning(false);
+    }, 150); // Half the transition duration for snappier feel
+  };
 
   const handleAddActivity = (date: string, slot: TimeSlotType) => {
     // Navigate to activities page with pre-selected date/slot
@@ -53,18 +64,23 @@ export const TimelinePage: React.FC = () => {
                 key={day.date}
                 label={`${day.dayName.substring(0, 3)} ${new Date(day.date + 'T12:00:00').getDate()}`}
                 selected={selectedDayIndex === index}
-                onClick={() => setSelectedDayIndex(index)}
+                onClick={() => handleDayChange(index)}
               />
             ))}
           </div>
         </div>
 
         {/* Selected Day Timeline */}
-        <TimelineDay
-          day={initialTimeline[selectedDayIndex]}
-          onAddActivity={handleAddActivity}
-          onAddMeal={handleAddMeal}
-        />
+        <div
+          className={`transition-smooth ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+          style={{ transition: 'opacity 150ms ease' }}
+        >
+          <TimelineDay
+            day={initialTimeline[selectedDayIndex]}
+            onAddActivity={handleAddActivity}
+            onAddMeal={handleAddMeal}
+          />
+        </div>
 
         {/* Meal Planning Modal */}
         {mealPlanningModal?.isOpen && (

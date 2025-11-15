@@ -28,66 +28,65 @@ export const HamburgerMenu: React.FC = () => {
 
   return (
     <>
-      {/* Hamburger Button - Bigger and on the right */}
+      {/* Hamburger Button - Clean, native touch target */}
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center justify-center w-12 h-12 rounded-full bg-icy-blue bg-opacity-40 touch-opacity transition-smooth hover:bg-opacity-60 active:scale-95"
+        className="flex items-center justify-center w-11 h-11 -mr-1 touch-opacity"
         aria-label="Open menu"
       >
-        <Icons.Menu size={28} className="text-frost-white" />
+        <Icons.Menu size={24} className="text-frost-white" />
       </button>
 
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-deep-navy bg-opacity-90 z-40 transition-menu backdrop-blur-sm"
+          className="fixed inset-0 bg-deep-navy bg-opacity-60 z-40 transition-menu backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      {/* Menu Panel - Slides from the right */}
+      {/* Menu Panel - Slides from the right, native iOS feel */}
       <div
         className={`
-          fixed top-0 right-0 h-full bg-gradient-to-b from-icy-blue to-deep-navy border-l border-pale-ice border-opacity-20
-          z-50 transition-menu w-80 shadow-2xl safe-top safe-bottom
+          fixed top-0 right-0 h-full bg-gradient-to-b from-icy-blue to-deep-navy
+          z-50 transition-menu w-72 shadow-2xl safe-top safe-bottom
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
         `}
+        style={{ boxShadow: '-4px 0 20px rgba(0, 0, 0, 0.3)' }}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-lg border-b border-pale-ice border-opacity-20">
-          <h2 className="text-h1 text-frost-white">Lake Dillon</h2>
+        {/* Header - Minimal */}
+        <div className="flex items-center justify-between px-md py-md border-b border-pale-ice border-opacity-10">
+          <h2 className="text-h2 text-frost-white font-bold">Lake Dillon</h2>
           <button
             onClick={() => setIsOpen(false)}
-            className="flex items-center justify-center w-10 h-10 rounded-full bg-deep-navy bg-opacity-40 touch-opacity transition-smooth hover:bg-opacity-60"
+            className="flex items-center justify-center w-10 h-10 touch-opacity"
             aria-label="Close menu"
           >
-            <Icons.X size={24} className="text-frost-white" />
+            <Icons.X size={20} className="text-frost-white" />
           </button>
         </div>
 
-        {/* Menu Items */}
-        <nav className="py-md">
+        {/* Menu Items - Clean list */}
+        <nav className="flex-1 py-sm">
           {menuItems.map((item) => {
             const IconComponent = Icons[item.icon];
             return (
               <button
                 key={item.path}
                 onClick={() => handleNavigate(item.path)}
-                className="w-full flex items-center gap-4 px-lg py-4 hover:bg-deep-navy hover:bg-opacity-50 transition-smooth text-left touch-opacity active:bg-opacity-70 rounded-lg mx-2"
+                className="w-full flex items-center gap-3 px-md py-3 transition-smooth text-left touch-opacity active:bg-deep-navy active:bg-opacity-30"
               >
-                <div className="flex items-center justify-center w-11 h-11 rounded-full bg-accent-blue bg-opacity-15">
-                  <IconComponent size={24} className="text-accent-blue" />
-                </div>
-                <span className="text-h3 text-frost-white">{item.label}</span>
+                <IconComponent size={20} className="text-accent-blue" />
+                <span className="text-body text-frost-white">{item.label}</span>
               </button>
             );
           })}
         </nav>
 
-        {/* Trip Info at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-lg border-t border-pale-ice border-opacity-20 bg-deep-navy bg-opacity-40">
+        {/* Trip Info at bottom - Compact */}
+        <div className="px-md py-md border-t border-pale-ice border-opacity-10 bg-deep-navy bg-opacity-20">
           <p className="text-body-compact text-pale-ice">Thanksgiving 2025</p>
-          <p className="text-label text-accent-blue mt-1">Nov 20-28</p>
+          <p className="text-label text-accent-blue mt-1">Nov 20-28 • 8 Days</p>
         </div>
       </div>
     </>

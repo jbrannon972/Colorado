@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { DayTimeline, TimeSlotType } from '../../types';
 import type { DragEndEvent } from '@dnd-kit/core';
-import { Card, Button, Icons } from '../ui';
+import { Card, Button, Icons, Toast } from '../ui';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import { SortableTimelineItem } from './SortableTimelineItem';
@@ -15,6 +15,13 @@ interface TimelineDayProps {
   onRemoveMeal?: (date: string, slot: TimeSlotType, mealId: string) => void;
 }
 
+interface DeletedItem {
+  type: 'activity' | 'meal';
+  id: string;
+  slotType: TimeSlotType;
+  data: any;
+}
+
 export const TimelineDay: React.FC<TimelineDayProps> = ({
   day,
   onAddActivity,
@@ -24,6 +31,107 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
   onRemoveMeal,
 }) => {
   const [localDay, setLocalDay] = useState(day);
+  const [deletedItem, setDeletedItem] = useState<DeletedItem | null>(null);
+
+  const handleDeleteActivity = (slotType: TimeSlotType, activityId: string) => {
+    const slot = localDay.timeSlots[slotType];
+    const activityIndex = slot.activities.findIndex((a) => a.id === activityId);
+    if (activityIndex === -1) return;
+
+    const activity = slot.activities[activityIndex];
+
+    // Store deleted item for undo
+    setDeletedItem({
+      type: 'activity',
+      id: activityId,
+      slotType,
+      data: activity,
+    });
+
+    // Remove from local state
+    const newActivities = slot.activities.filter((a) => a.id !== activityId);
+    setLocalDay({
+      ...localDay,
+      timeSlots: {
+        ...localDay.timeSlots,
+        [slotType]: {
+          ...slot,
+          activities: newActivities,
+        },
+      },
+    });
+
+    // Call parent handler if provided
+    if (onRemoveActivity) {
+      onRemoveActivity(day.date, slotType, activityId);
+    }
+  };
+
+  const handleDeleteMeal = (slotType: TimeSlotType, mealId: string) => {
+    const slot = localDay.timeSlots[slotType];
+    const mealIndex = slot.meals.findIndex((m) => m.id === mealId);
+    if (mealIndex === -1) return;
+
+    const meal = slot.meals[mealIndex];
+
+    // Store deleted item for undo
+    setDeletedItem({
+      type: 'meal',
+      id: mealId,
+      slotType,
+      data: meal,
+    });
+
+    // Remove from local state
+    const newMeals = slot.meals.filter((m) => m.id !== mealId);
+    setLocalDay({
+      ...localDay,
+      timeSlots: {
+        ...localDay.timeSlots,
+        [slotType]: {
+          ...slot,
+          meals: newMeals,
+        },
+      },
+    });
+
+    // Call parent handler if provided
+    if (onRemoveMeal) {
+      onRemoveMeal(day.date, slotType, mealId);
+    }
+  };
+
+  const handleUndo = () => {
+    if (!deletedItem) return;
+
+    const slot = localDay.timeSlots[deletedItem.slotType];
+
+    if (deletedItem.type === 'activity') {
+      setLocalDay({
+        ...localDay,
+        timeSlots: {
+          ...localDay.timeSlots,
+          [deletedItem.slotType]: {
+            ...slot,
+            activities: [...slot.activities, deletedItem.data],
+          },
+        },
+      });
+    } else {
+      setLocalDay({
+        ...localDay,
+        timeSlots: {
+          ...localDay.timeSlots,
+          [deletedItem.slotType]: {
+            ...slot,
+            meals: [...slot.meals, deletedItem.data],
+          },
+        },
+      });
+    }
+
+    setDeletedItem(null);
+  };
 
   const handleDragEnd = (event: DragEndEvent, slotType: TimeSlotType) => {
     const { active, over } = event;
@@ -123,11 +231,7 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                       <SortableTimelineItem
                         key={activity.id}
                         id={activity.id}
-                        onDelete={
-                          onRemoveActivity
-                            ? () => onRemoveActivity(localDay.date, slotType, activity.id)
-                            : undefined
-                        }
+                        onDelete={() => handleDeleteActivity(slotType, activity.id)}
                       >
                         Activity: {activity.activityId}
                       </SortableTimelineItem>
@@ -142,11 +246,7 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                   <SortableTimelineItem
                     key={meal.id}
                     id={meal.id}
-                    onDelete={
-                      onRemoveMeal
-                        ? () => onRemoveMeal(localDay.date, slotType, meal.id)
-                        : undefined
-                    }
+                    onDelete={() => handleDeleteMeal(slotType, meal.id)}
                   >
                     Meal: {meal.type}
                   </SortableTimelineItem>
@@ -207,6 +307,19 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
             )}
           </div>
         </Card>
+      )}
+
+      {/* Undo Toast */}
+      {deletedItem && (
+        <Toast
+          message={`${deletedItem.type === 'activity' ? 'Activity' : 'Meal'} removed`}
+          action={{
+            label: 'UNDO',
+            onClick: handleUndo,
+          }}
+          onClose={() => setDeletedItem(null)}
+          duration={4000}
+        />
       )}
     </div>
   );

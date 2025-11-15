@@ -1,5 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useState, useEffect } from 'react';
 import { Icons } from '../ui';
 import { PhotoUpload } from './PhotoUpload';
 import { PhotoGallery } from './PhotoGallery';
@@ -30,6 +31,16 @@ export const SortableTimelineItem: React.FC<SortableTimelineItemProps> = ({
     isDragging,
   } = useSortable({ id });
 
+  const [isNew, setIsNew] = useState(true);
+
+  useEffect(() => {
+    // Mark as not new after animation completes
+    const timer = setTimeout(() => {
+      setIsNew(false);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, []);
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -39,7 +50,10 @@ export const SortableTimelineItem: React.FC<SortableTimelineItemProps> = ({
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={{
+        ...style,
+        animation: isNew ? 'slideUp 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94), fadeIn 200ms ease-out' : undefined,
+      }}
       className="bg-deep-navy bg-opacity-50 rounded-subtle overflow-hidden"
     >
       <div className="p-2 space-y-2">

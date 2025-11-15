@@ -24,6 +24,14 @@ export const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
   const [selectedTown, setSelectedTown] = useState<string>('All');
   const [customMealName, setCustomMealName] = useState('');
   const [customMealNotes, setCustomMealNotes] = useState('');
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 250); // Match animation duration
+  };
 
   const towns = ['All', 'Breckenridge', 'Silverthorne', 'Frisco', 'Keystone', 'Dillon', 'Idaho Springs'];
 
@@ -55,13 +63,13 @@ export const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
 
   const handleRestaurantSelect = (restaurant: Restaurant) => {
     onSelectRestaurant(restaurant);
-    onClose();
+    handleClose();
   };
 
   const handleCustomMealSubmit = () => {
     if (!customMealName.trim()) return;
     onAddCustomMeal(customMealName, customMealNotes);
-    onClose();
+    handleClose();
   };
 
   const getMealTimeLabel = () => {
@@ -72,15 +80,33 @@ export const MealPlanningModal: React.FC<MealPlanningModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-deep-navy bg-opacity-90">
-      <div className="w-full max-w-2xl max-h-screen bg-icy-blue rounded-t-lg md:rounded-lg overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-end justify-center">
+      {/* Backdrop */}
+      <div
+        className={`absolute inset-0 bg-deep-navy backdrop-blur-sm transition-menu ${
+          isClosing ? 'bg-opacity-0' : 'bg-opacity-70'
+        }`}
+        onClick={handleClose}
+      />
+
+      {/* Bottom Sheet */}
+      <div
+        className="bottom-sheet w-full max-w-2xl gpu-accelerated"
+        style={{
+          animation: isClosing
+            ? 'slideDown 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            : 'slideUp 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        }}
+      >
+        {/* Handle */}
+        <div className="bottom-sheet-handle" />
         {/* Header */}
         <div className="p-lg border-b border-pale-ice border-opacity-20">
           <div className="flex items-center justify-between mb-sm">
             <h2 className="text-h1 text-frost-white">Plan {getMealTimeLabel()}</h2>
             <button
-              onClick={onClose}
-              className="text-pale-ice hover:text-frost-white transition-colors"
+              onClick={handleClose}
+              className="text-pale-ice hover:text-frost-white transition-colors touch-opacity"
             >
               <Icons.X size={24} />
             </button>
