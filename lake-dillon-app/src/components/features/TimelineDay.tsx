@@ -1,21 +1,62 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { DayTimeline, TimeSlotType } from '../../types';
+import type { DragEndEvent } from '@dnd-kit/core';
 import { Card, Button, Icons } from '../ui';
+import { DndContext, closestCenter } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import { SortableTimelineItem } from './SortableTimelineItem';
 
 interface TimelineDayProps {
   day: DayTimeline;
   onAddActivity?: (date: string, slot: TimeSlotType) => void;
   onAddMeal?: (date: string, slot: TimeSlotType) => void;
+  onReorderActivities?: (date: string, slot: TimeSlotType, newOrder: string[]) => void;
+  onRemoveActivity?: (date: string, slot: TimeSlotType, activityId: string) => void;
+  onRemoveMeal?: (date: string, slot: TimeSlotType, mealId: string) => void;
 }
 
 export const TimelineDay: React.FC<TimelineDayProps> = ({
   day,
   onAddActivity,
   onAddMeal,
+  onReorderActivities,
+  onRemoveActivity,
+  onRemoveMeal,
 }) => {
+  const [localDay, setLocalDay] = useState(day);
+
+  const handleDragEnd = (event: DragEndEvent, slotType: TimeSlotType) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+
+    const slot = localDay.timeSlots[slotType];
+    const oldIndex = slot.activities.findIndex((a) => a.id === active.id);
+    const newIndex = slot.activities.findIndex((a) => a.id === over.id);
+
+    if (oldIndex !== -1 && newIndex !== -1) {
+      const newActivities = arrayMove(slot.activities, oldIndex, newIndex);
+
+      setLocalDay({
+        ...localDay,
+        timeSlots: {
+          ...localDay.timeSlots,
+          [slotType]: {
+            ...slot,
+            activities: newActivities,
+          },
+        },
+      });
+
+      if (onReorderActivities) {
+        onReorderActivities(day.date, slotType, newActivities.map((a) => a.id));
+      }
+    }
+  };
+
   const renderTimeSlot = (slotType: TimeSlotType, slotName: string) => {
-    const slot = day.timeSlots[slotType];
-    const isLocked = !slot.isEmpty && (day.tripPhase === 'ARRIVAL_DAY' || day.tripPhase === 'DEPARTURE_DAY');
+    const slot = localDay.timeSlots[slotType];
+    const isLocked = !slot.isEmpty && (localDay.tripPhase === 'ARRIVAL_DAY' || localDay.tripPhase === 'DEPARTURE_DAY');
 
     return (
       <Card key={slotType} className="space-y-sm">
@@ -26,13 +67,13 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
 
         {isLocked && (
           <div className="text-body-compact text-info-slate">
-            {day.tripPhase === 'ARRIVAL_DAY' && slotType === 'morning' && (
+            {localDay.tripPhase === 'ARRIVAL_DAY' && slotType === 'morning' && (
               <p>Drive continues - Night driving leg</p>
             )}
-            {day.tripPhase === 'ARRIVAL_DAY' && slotType === 'afternoon' && (
+            {localDay.tripPhase === 'ARRIVAL_DAY' && slotType === 'afternoon' && (
               <p>Arrival & Check-in at Spinnaker (1:00 PM)</p>
             )}
-            {day.tripPhase === 'DEPARTURE_DAY' && (
+            {localDay.tripPhase === 'DEPARTURE_DAY' && (
               <p>Packing & Departure - Drive home to Houston</p>
             )}
           </div>
@@ -47,7 +88,7 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
               <div className="flex gap-2">
                 <Button
                   variant="compact"
-                  onClick={() => onAddActivity(day.date, slotType)}
+                  onClick={() => onAddActivity(localDay.date, slotType)}
                   className="flex-1"
                 >
                   <Icons.Plus size={14} />
@@ -55,7 +96,7 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                 </Button>
                 <Button
                   variant="compact"
-                  onClick={() => onAddMeal(day.date, slotType)}
+                  onClick={() => onAddMeal(localDay.date, slotType)}
                   className="flex-1"
                 >
                   <Icons.Plus size={14} />
@@ -69,26 +110,46 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
         {!isLocked && !slot.isEmpty && (
           <div className="space-y-2">
             {slot.activities.length > 0 && (
-              <div className="space-y-1">
-                {slot.activities.map((activity) => (
-                  <div
-                    key={activity.id}
-                    className="text-body text-frost-white bg-deep-navy bg-opacity-50 p-2 rounded-subtle"
-                  >
-                    Activity: {activity.activityId}
+              <DndContext
+                collisionDetection={closestCenter}
+                onDragEnd={(event) => handleDragEnd(event, slotType)}
+              >
+                <SortableContext
+                  items={slot.activities.map((a) => a.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-1">
+                    {slot.activities.map((activity) => (
+                      <SortableTimelineItem
+                        key={activity.id}
+                        id={activity.id}
+                        onDelete={
+                          onRemoveActivity
+                            ? () => onRemoveActivity(localDay.date, slotType, activity.id)
+                            : undefined
+                        }
+                      >
+                        Activity: {activity.activityId}
+                      </SortableTimelineItem>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </SortableContext>
+              </DndContext>
             )}
             {slot.meals.length > 0 && (
               <div className="space-y-1">
                 {slot.meals.map((meal) => (
-                  <div
+                  <SortableTimelineItem
                     key={meal.id}
-                    className="text-body text-frost-white bg-deep-navy bg-opacity-50 p-2 rounded-subtle"
+                    id={meal.id}
+                    onDelete={
+                      onRemoveMeal
+                        ? () => onRemoveMeal(localDay.date, slotType, meal.id)
+                        : undefined
+                    }
                   >
                     Meal: {meal.type}
-                  </div>
+                  </SortableTimelineItem>
                 ))}
               </div>
             )}

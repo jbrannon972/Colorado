@@ -5,12 +5,14 @@ export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'co
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   children: React.ReactNode;
+  as?: 'button' | 'span';
 }
 
 export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   children,
   className = '',
+  as: Component = 'button',
   ...props
 }) => {
   const baseStyles = 'transition-smooth touch-opacity flex items-center justify-center gap-2';
@@ -24,11 +26,11 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   return (
-    <button
+    <Component
       className={`${baseStyles} ${variants[variant]} ${className}`}
-      {...props}
+      {...(props as any)}
     >
       {children}
-    </button>
+    </Component>
   );
 };

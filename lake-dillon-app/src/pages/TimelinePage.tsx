@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { Layout } from '../components/layout';
 import { TimelineDay } from '../components/features/TimelineDay';
+import { MealPlanningModal } from '../components/features/MealPlanningModal';
 import { Chip } from '../components/ui';
 import { initialTimeline } from '../data/timeline';
-import type { TimeSlotType } from '../types';
+import type { TimeSlotType, Restaurant } from '../types';
 
 export const TimelinePage: React.FC = () => {
   const [selectedDayIndex, setSelectedDayIndex] = useState(2); // Default to Saturday (first full activity day)
+  const [mealPlanningModal, setMealPlanningModal] = useState<{
+    isOpen: boolean;
+    date: string;
+    slot: TimeSlotType;
+  } | null>(null);
 
   const handleAddActivity = (date: string, slot: TimeSlotType) => {
     // Navigate to activities page with pre-selected date/slot
@@ -14,8 +20,18 @@ export const TimelinePage: React.FC = () => {
   };
 
   const handleAddMeal = (date: string, slot: TimeSlotType) => {
-    // Navigate to dining page with pre-selected date/slot
-    window.location.href = `/dining?date=${date}&slot=${slot}`;
+    setMealPlanningModal({ isOpen: true, date, slot });
+  };
+
+  const handleSelectRestaurant = (restaurant: Restaurant) => {
+    alert(`Added ${restaurant.name} to your meal plan! (Firebase integration coming soon)`);
+    setMealPlanningModal(null);
+  };
+
+  const handleAddCustomMeal = (mealName: string, notes: string) => {
+    const notesSummary = notes ? ` (${notes.substring(0, 50)}...)` : '';
+    alert(`Added custom meal "${mealName}"${notesSummary} to your plan! (Firebase integration coming soon)`);
+    setMealPlanningModal(null);
   };
 
   return (
@@ -49,6 +65,17 @@ export const TimelinePage: React.FC = () => {
           onAddActivity={handleAddActivity}
           onAddMeal={handleAddMeal}
         />
+
+        {/* Meal Planning Modal */}
+        {mealPlanningModal?.isOpen && (
+          <MealPlanningModal
+            date={mealPlanningModal.date}
+            slot={mealPlanningModal.slot}
+            onClose={() => setMealPlanningModal(null)}
+            onSelectRestaurant={handleSelectRestaurant}
+            onAddCustomMeal={handleAddCustomMeal}
+          />
+        )}
       </div>
     </Layout>
   );

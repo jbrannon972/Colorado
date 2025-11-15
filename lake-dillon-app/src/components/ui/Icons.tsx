@@ -24,6 +24,9 @@ import {
   Star,
   ChevronDown,
   Home,
+  GripVertical,
+  Upload,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 export const Icons = {
@@ -51,6 +54,9 @@ export const Icons = {
   Star,
   ChevronDown,
   Home,
+  GripVertical,
+  Upload,
+  Image: ImageIcon,
 };
 
 export type IconName = keyof typeof Icons;

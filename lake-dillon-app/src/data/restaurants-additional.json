@@ -1,0 +1,27 @@
+[
+  {
+    "id": "horseshoe-breck",
+    "name": "Horseshoe Restaurant",
+    "cuisine": ["American", "Breakfast", "Brunch"],
+    "town": "Breckenridge",
+    "driveTimeFromSpinnaker": 15,
+    "pricePerPerson": { "min": 15, "max": 28 },
+    "totalForFamilyOf5": 110,
+    "hours": [
+      { "dayOfWeek": "Thursday", "open": "10:00", "close": "20:30" },
+      { "dayOfWeek": "Friday", "open": "10:00", "close": "20:30" },
+      { "dayOfWeek": "Saturday", "open": "10:00", "close": "20:30" }
+    ],
+    "toddlerFriendly": true,
+    "pregnancySafe": true,
+    "spaceForStroller": true,
+    "boosterSeatAvailable": true,
+    "rating": 4.6,
+    "reviewCount": 534,
+    "servesBreakfast": true,
+    "servesLunch": true,
+    "servesDinner": true,
+    "openThanksgiving": true,
+    "specialThanksgivingMenu": true
+  }
+]
