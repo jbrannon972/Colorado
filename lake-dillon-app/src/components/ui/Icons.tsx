@@ -27,6 +27,10 @@ import {
   GripVertical,
   Upload,
   Image as ImageIcon,
+  ExternalLink,
+  CheckCircle,
+  Camera,
+  Phone,
 } from 'lucide-react';
 
 export const Icons = {
@@ -57,6 +61,10 @@ export const Icons = {
   GripVertical,
   Upload,
   Image: ImageIcon,
+  ExternalLink,
+  CheckCircle,
+  Camera,
+  Phone,
 };
 
 export type IconName = keyof typeof Icons;

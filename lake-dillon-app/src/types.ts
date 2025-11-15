@@ -19,6 +19,12 @@ export interface Activity {
   rating?: number;
   reviewCount?: number;
   bookingLink?: string;
+  website?: string;
+  address?: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
   town: Town;
   seasonalNotes?: string;
   available?: boolean;
@@ -37,6 +43,11 @@ export interface Restaurant {
   phone?: string;
   website?: string;
   reservationLink?: string;
+  address?: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
 
   hours: Array<{
     dayOfWeek: string;

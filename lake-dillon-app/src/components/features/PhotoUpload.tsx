@@ -10,7 +10,8 @@ interface PhotoUploadProps {
 
 export const PhotoUpload: React.FC<PhotoUploadProps> = ({ eventId, onPhotoUploaded }) => {
   const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -45,9 +46,12 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ eventId, onPhotoUpload
       // Call callback with URL
       onPhotoUploaded(downloadURL);
 
-      // Clear file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+      // Clear file inputs
+      if (cameraInputRef.current) {
+        cameraInputRef.current.value = '';
+      }
+      if (galleryInputRef.current) {
+        galleryInputRef.current.value = '';
       }
     } catch (error) {
       console.error('Error uploading photo:', error);
@@ -58,24 +62,47 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({ eventId, onPhotoUpload
   };
 
   return (
-    <div>
+    <div className="flex gap-2">
+      {/* Camera Input (with capture attribute for mobile camera) */}
       <input
-        ref={fileInputRef}
+        ref={cameraInputRef}
         type="file"
         accept="image/*"
+        capture="environment"
         onChange={handleFileSelect}
         className="hidden"
-        id={`photo-upload-${eventId}`}
+        id={`photo-camera-${eventId}`}
       />
-      <label htmlFor={`photo-upload-${eventId}`}>
+      <label htmlFor={`photo-camera-${eventId}`}>
         <Button
           as="span"
           variant="compact"
           disabled={uploading}
           className="cursor-pointer"
         >
-          <Icons.Upload size={14} />
-          {uploading ? 'Uploading...' : 'Add Photo'}
+          <Icons.Camera size={14} />
+          {uploading ? 'Uploading...' : 'Camera'}
+        </Button>
+      </label>
+
+      {/* Gallery Input (file picker) */}
+      <input
+        ref={galleryInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileSelect}
+        className="hidden"
+        id={`photo-gallery-${eventId}`}
+      />
+      <label htmlFor={`photo-gallery-${eventId}`}>
+        <Button
+          as="span"
+          variant="compact"
+          disabled={uploading}
+          className="cursor-pointer"
+        >
+          <Icons.Image size={14} />
+          Gallery
         </Button>
       </label>
     </div>

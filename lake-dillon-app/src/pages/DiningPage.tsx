@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Layout } from '../components/layout';
 import { RestaurantCard } from '../components/features/RestaurantCard';
+import { RestaurantSelectionModal } from '../components/features/RestaurantSelectionModal';
 import { Input, Chip, Icons } from '../components/ui';
 import { restaurants } from '../data/restaurants';
-import type { Restaurant } from '../types';
+import { useTimeline } from '../hooks/useTimeline';
+import type { Restaurant, TimeSlotType, MealType } from '../types';
 
 export const DiningPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -11,6 +14,10 @@ export const DiningPage: React.FC = () => {
   const [selectedMealType, setSelectedMealType] = useState<string>('All');
   const [toddlerFriendlyOnly, setToddlerFriendlyOnly] = useState(false);
   const [thanksgivingOnly, setThanksgivingOnly] = useState(false);
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
+
+  const { addMealToTimeline } = useTimeline();
+  const navigate = useNavigate();
 
   const towns = ['All', 'Breckenridge', 'Silverthorne', 'Frisco', 'Keystone', 'Dillon', 'Idaho Springs'];
   const mealTypes = ['All', 'Breakfast', 'Lunch', 'Dinner'];
@@ -48,7 +55,29 @@ export const DiningPage: React.FC = () => {
   });
 
   const handleAddToDay = (restaurant: Restaurant) => {
-    alert(`Adding "${restaurant.name}" to your timeline. (Feature coming soon: select day & meal time)`);
+    setSelectedRestaurant(restaurant);
+  };
+
+  const handleConfirmAddToTimeline = async (
+    date: string,
+    slot: TimeSlotType,
+    mealType: MealType
+  ) => {
+    if (selectedRestaurant) {
+      const success = await addMealToTimeline(date, slot, {
+        type: mealType,
+        restaurantId: selectedRestaurant.id,
+        participants: [],
+      });
+
+      if (success) {
+        setSelectedRestaurant(null);
+        alert(`✅ Added "${selectedRestaurant.name}" to your meal plan!`);
+        navigate('/');
+      } else {
+        alert('Failed to add restaurant. Please try again.');
+      }
+    }
   };
 
   const handleViewMenu = (restaurant: Restaurant) => {
@@ -143,6 +172,15 @@ export const DiningPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Restaurant Selection Modal */}
+      {selectedRestaurant && (
+        <RestaurantSelectionModal
+          restaurant={selectedRestaurant}
+          onClose={() => setSelectedRestaurant(null)}
+          onConfirm={handleConfirmAddToTimeline}
+        />
+      )}
     </Layout>
   );
 };

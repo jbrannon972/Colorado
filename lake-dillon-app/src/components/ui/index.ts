@@ -5,3 +5,4 @@ export { Icons, Icon } from './Icons';
 export { Chip } from './Chip';
 export { Toast } from './Toast';
 export { DatePicker } from './DatePicker';
+export { AddressLink } from './AddressLink';

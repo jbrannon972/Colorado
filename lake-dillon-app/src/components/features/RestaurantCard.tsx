@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Restaurant } from '../../types';
-import { Card, Button, Icons } from '../ui';
+import { Card, Button, Icons, AddressLink } from '../ui';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
@@ -19,14 +19,48 @@ export const RestaurantCard: React.FC<RestaurantCardProps> = ({
       <div>
         <h3 className="text-h3 text-frost-white">{restaurant.name}</h3>
         <p className="text-label text-pale-ice mt-1">
-          {restaurant.cuisine.join(' • ')}
+          {restaurant.cuisine.join(' • ')} • {restaurant.town}
         </p>
       </div>
 
-      {/* Location & Drive Time */}
-      <div className="flex items-center gap-2 text-body-compact text-pale-ice">
-        <Icons.MapPin size={16} className="text-pale-ice" />
-        <span>{restaurant.town} ({restaurant.driveTimeFromSpinnaker} min drive)</span>
+      {/* Location & Contact */}
+      <div className="space-y-1 text-body-compact text-pale-ice">
+        <div className="flex items-center gap-2">
+          <Icons.MapPin size={16} className="text-pale-ice" />
+          <span>{restaurant.driveTimeFromSpinnaker} min drive from Spinnaker</span>
+        </div>
+
+        {/* Address (Google Maps Link) */}
+        {restaurant.address && (
+          <AddressLink
+            address={restaurant.address}
+            coordinates={restaurant.coordinates}
+            name={restaurant.name}
+            className="text-pale-ice"
+          />
+        )}
+
+        {/* Phone */}
+        {restaurant.phone && (
+          <button
+            onClick={() => window.open(`tel:${restaurant.phone}`, '_self')}
+            className="flex items-start gap-2 text-left transition-smooth hover:text-accent-blue"
+          >
+            <Icons.Phone size={14} className="mt-0.5 flex-shrink-0" />
+            <span className="text-body-compact underline">{restaurant.phone}</span>
+          </button>
+        )}
+
+        {/* Website */}
+        {restaurant.website && (
+          <button
+            onClick={() => window.open(restaurant.website, '_blank', 'noopener,noreferrer')}
+            className="flex items-start gap-2 text-left transition-smooth hover:text-accent-blue"
+          >
+            <Icons.ExternalLink size={14} className="mt-0.5 flex-shrink-0" />
+            <span className="text-body-compact underline">Visit Website</span>
+          </button>
+        )}
       </div>
 
       {/* Pricing */}

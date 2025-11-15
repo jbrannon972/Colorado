@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Layout } from '../components/layout';
 import { TimelineDay } from '../components/features/TimelineDay';
 import { MealPlanningModal } from '../components/features/MealPlanningModal';
-import { DatePicker } from '../components/ui';
-import { initialTimeline } from '../data/timeline';
-import type { TimeSlotType, Restaurant } from '../types';
+import { DatePicker, Icons } from '../components/ui';
+import { useTimeline } from '../hooks/useTimeline';
+import type { TimeSlotType, Restaurant, MealType } from '../types';
 
 export const TimelinePage: React.FC = () => {
   const [selectedDayIndex, setSelectedDayIndex] = useState(2); // Default to Saturday (first full activity day)
@@ -14,6 +14,8 @@ export const TimelinePage: React.FC = () => {
     slot: TimeSlotType;
   } | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const { timeline, loading, addMealToTimeline } = useTimeline();
 
   const handleDayChange = (newIndex: number) => {
     if (newIndex === selectedDayIndex) return;
@@ -25,25 +27,82 @@ export const TimelinePage: React.FC = () => {
     }, 150); // Half the transition duration for snappier feel
   };
 
-  const handleAddActivity = (date: string, slot: TimeSlotType) => {
-    // Navigate to activities page with pre-selected date/slot
-    window.location.href = `/activities?date=${date}&slot=${slot}`;
+  const handleAddActivity = () => {
+    // Navigate to activities page
+    window.location.href = '/activities';
   };
 
   const handleAddMeal = (date: string, slot: TimeSlotType) => {
     setMealPlanningModal({ isOpen: true, date, slot });
   };
 
-  const handleSelectRestaurant = (restaurant: Restaurant) => {
-    alert(`Added ${restaurant.name} to your meal plan! (Firebase integration coming soon)`);
-    setMealPlanningModal(null);
+  const handleSelectRestaurant = async (restaurant: Restaurant) => {
+    if (!mealPlanningModal) return;
+
+    // Determine meal type based on time slot
+    const mealType: MealType =
+      mealPlanningModal.slot === 'morning' ? 'breakfast' :
+      mealPlanningModal.slot === 'afternoon' ? 'lunch' : 'dinner';
+
+    const success = await addMealToTimeline(
+      mealPlanningModal.date,
+      mealPlanningModal.slot,
+      {
+        type: mealType,
+        restaurantId: restaurant.id,
+        participants: [], // Can be set later
+      }
+    );
+
+    if (success) {
+      alert(`✅ Added ${restaurant.name} to your meal plan!`);
+      setMealPlanningModal(null);
+    } else {
+      alert('Failed to add meal. Please try again.');
+    }
   };
 
-  const handleAddCustomMeal = (mealName: string, notes: string) => {
-    const notesSummary = notes ? ` (${notes.substring(0, 50)}...)` : '';
-    alert(`Added custom meal "${mealName}"${notesSummary} to your plan! (Firebase integration coming soon)`);
-    setMealPlanningModal(null);
+  const handleAddCustomMeal = async (mealName: string, notes: string) => {
+    if (!mealPlanningModal) return;
+
+    // Determine meal type based on time slot
+    const mealType: MealType =
+      mealPlanningModal.slot === 'morning' ? 'breakfast' :
+      mealPlanningModal.slot === 'afternoon' ? 'lunch' : 'dinner';
+
+    const success = await addMealToTimeline(
+      mealPlanningModal.date,
+      mealPlanningModal.slot,
+      {
+        type: mealType,
+        customMeal: {
+          whatWereEating: mealName,
+          notes,
+        },
+        participants: [],
+      }
+    );
+
+    if (success) {
+      alert(`✅ Added custom meal "${mealName}" to your plan!`);
+      setMealPlanningModal(null);
+    } else {
+      alert('Failed to add meal. Please try again.');
+    }
   };
+
+  if (loading) {
+    return (
+      <Layout title="Timeline">
+        <div className="flex items-center justify-center py-xl">
+          <div className="text-center">
+            <Icons.Clock size={48} className="text-accent-blue mx-auto mb-4 animate-pulse" />
+            <p className="text-body text-pale-ice">Loading your timeline...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout title="Timeline">
@@ -58,7 +117,7 @@ export const TimelinePage: React.FC = () => {
 
         {/* Date Selector */}
         <DatePicker
-          dates={initialTimeline.map((day) => ({ date: day.date, dayName: day.dayName }))}
+          dates={timeline.map((day) => ({ date: day.date, dayName: day.dayName }))}
           selectedIndex={selectedDayIndex}
           onSelectDate={handleDayChange}
         />
@@ -69,7 +128,7 @@ export const TimelinePage: React.FC = () => {
           style={{ transition: 'opacity 150ms ease' }}
         >
           <TimelineDay
-            day={initialTimeline[selectedDayIndex]}
+            day={timeline[selectedDayIndex]}
             onAddActivity={handleAddActivity}
             onAddMeal={handleAddMeal}
           />

@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Layout } from '../components/layout';
 import { ActivityCard } from '../components/features/ActivityCard';
+import { ActivitySelectionModal } from '../components/features/ActivitySelectionModal';
 import { Input, Chip, Icons } from '../components/ui';
 import { activities } from '../data/activities';
-import type { Activity } from '../types';
+import { useTimeline } from '../hooks/useTimeline';
+import type { Activity, TimeSlotType } from '../types';
 
 export const ActivitiesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [toddlerFriendlyOnly, setToddlerFriendlyOnly] = useState(false);
   const [pregnancySafeOnly, setPregnancySafeOnly] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
+
+  const { addActivityToTimeline } = useTimeline();
+  const navigate = useNavigate();
 
   const categories = ['All', 'Wildlife', 'Hiking', 'Scenic Drive', 'Winter', 'Museum', 'Shopping', 'Brewery', 'Family'];
 
@@ -38,12 +45,28 @@ export const ActivitiesPage: React.FC = () => {
   });
 
   const handleAddToDay = (activity: Activity) => {
-    alert(`Adding "${activity.name}" to your timeline. (Feature coming soon: select day & time)`);
+    setSelectedActivity(activity);
+  };
+
+  const handleConfirmAddToTimeline = async (date: string, slot: TimeSlotType) => {
+    if (selectedActivity) {
+      const success = await addActivityToTimeline(date, slot, selectedActivity.id);
+      if (success) {
+        setSelectedActivity(null);
+        // Show success message and navigate to timeline
+        alert(`✅ Added "${selectedActivity.name}" to your timeline!`);
+        navigate('/');
+      } else {
+        alert('Failed to add activity. Please try again.');
+      }
+    }
   };
 
   const handleMoreInfo = (activity: Activity) => {
     if (activity.bookingLink) {
       window.open(activity.bookingLink, '_blank');
+    } else if (activity.website) {
+      window.open(activity.website, '_blank');
     } else {
       alert(`More info about "${activity.name}"\n\n${activity.description}`);
     }
@@ -121,6 +144,15 @@ export const ActivitiesPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Activity Selection Modal */}
+      {selectedActivity && (
+        <ActivitySelectionModal
+          activity={selectedActivity}
+          onClose={() => setSelectedActivity(null)}
+          onConfirm={handleConfirmAddToTimeline}
+        />
+      )}
     </Layout>
   );
 };

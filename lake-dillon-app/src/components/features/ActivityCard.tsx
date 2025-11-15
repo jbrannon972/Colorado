@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Activity } from '../../types';
-import { Card, Button, Icons } from '../ui';
+import { Card, Button, Icons, AddressLink } from '../ui';
 
 interface ActivityCardProps {
   activity: Activity;
@@ -19,7 +19,7 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
       <div>
         <h3 className="text-h3 text-frost-white">{activity.name}</h3>
         <p className="text-label text-pale-ice mt-1">
-          {activity.category.join(' • ')}
+          {activity.category.join(' • ')} • {activity.town}
         </p>
       </div>
 
@@ -42,6 +42,27 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
               ${activity.costPerPerson.min}-${activity.costPerPerson.max} per person
             </span>
           </div>
+        )}
+
+        {/* Address (Google Maps Link) */}
+        {activity.address && (
+          <AddressLink
+            address={activity.address}
+            coordinates={activity.coordinates}
+            name={activity.name}
+            className="text-pale-ice"
+          />
+        )}
+
+        {/* Website */}
+        {activity.website && (
+          <button
+            onClick={() => window.open(activity.website, '_blank', 'noopener,noreferrer')}
+            className="flex items-start gap-2 text-left transition-smooth hover:text-accent-blue text-pale-ice"
+          >
+            <Icons.ExternalLink size={14} className="mt-0.5 flex-shrink-0" />
+            <span className="text-body-compact underline">Visit Website</span>
+          </button>
         )}
       </div>
 
