@@ -143,10 +143,15 @@ export const RestaurantDetailModal: React.FC<RestaurantDetailModalProps> = ({
           {restaurant.address && (
             <div className="space-y-2">
               <div className="text-label text-pale-ice">ADDRESS</div>
-              <div className="flex items-start gap-2 text-body text-frost-white">
-                <Icons.MapPin size={16} className="text-accent-blue flex-shrink-0 mt-1" />
-                <span>{restaurant.address}</span>
-              </div>
+              <button
+                onClick={handleGetDirections}
+                className="flex items-start gap-2 text-body text-frost-white hover:text-accent-blue transition-colors text-left w-full group"
+              >
+                <Icons.MapPin size={16} className="text-accent-blue flex-shrink-0 mt-1 group-hover:scale-110 transition-transform" />
+                <span className="underline decoration-transparent group-hover:decoration-accent-blue transition-colors">
+                  {restaurant.address}
+                </span>
+              </button>
             </div>
           )}
 
@@ -156,10 +161,12 @@ export const RestaurantDetailModal: React.FC<RestaurantDetailModalProps> = ({
               <div className="text-label text-pale-ice">PHONE</div>
               <button
                 onClick={handleCall}
-                className="flex items-center gap-2 text-body text-accent-blue hover:underline"
+                className="flex items-center gap-2 text-body text-frost-white hover:text-accent-blue transition-colors text-left w-full group"
               >
-                <Icons.Phone size={16} />
-                <span>{restaurant.phone}</span>
+                <Icons.Phone size={16} className="text-accent-blue group-hover:scale-110 transition-transform" />
+                <span className="underline decoration-transparent group-hover:decoration-accent-blue transition-colors">
+                  {restaurant.phone}
+                </span>
               </button>
             </div>
           )}
