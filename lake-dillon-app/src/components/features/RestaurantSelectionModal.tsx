@@ -131,7 +131,7 @@ export const RestaurantSelectionModal: React.FC<RestaurantSelectionModalProps> =
                         <div>
                           <p className="text-body text-frost-white font-semibold">{day.dayName}</p>
                           <p className="text-body-compact text-pale-ice">
-                            {new Date(day.date).toLocaleDateString('en-US', {
+                            {new Date(day.date + 'T12:00:00').toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
                             })}
