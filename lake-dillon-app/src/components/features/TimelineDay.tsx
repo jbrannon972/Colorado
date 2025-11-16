@@ -243,23 +243,33 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="space-y-1">
-                    {slot.activities.map((activity) => (
-                      <SortableTimelineItem
-                        key={activity.id}
-                        id={activity.id}
-                        onDelete={() => handleDeleteActivity(slotType, activity.id)}
-                        photos={activity.photos}
-                        onPhotoUploaded={
-                          onAddPhotoToActivity
-                            ? (photoUrl) => onAddPhotoToActivity(day.date, slotType, activity.id, photoUrl)
-                            : undefined
-                        }
-                        onDeletePhoto={
-                          onRemovePhotoFromActivity
-                            ? (photoUrl) => onRemovePhotoFromActivity(day.date, slotType, activity.id, photoUrl)
-                            : undefined
-                        }
-                      >
+                    {slot.activities.map((activity) => {
+                      const activityData = activities.find((a) => a.id === activity.activityId);
+                      return (
+                        <SortableTimelineItem
+                          key={activity.id}
+                          id={activity.id}
+                          onDelete={() => handleDeleteActivity(slotType, activity.id)}
+                          photos={activity.photos}
+                          onPhotoUploaded={
+                            onAddPhotoToActivity
+                              ? (photo) => onAddPhotoToActivity(day.date, slotType, activity.id, photo)
+                              : undefined
+                          }
+                          onDeletePhoto={
+                            onRemovePhotoFromActivity
+                              ? (photoUrl) => onRemovePhotoFromActivity(day.date, slotType, activity.id, photoUrl)
+                              : undefined
+                          }
+                          photoMetadata={{
+                            location: {
+                              activityId: activity.activityId,
+                              activityName: activityData?.name,
+                            },
+                            date: day.date,
+                            timeSlot: slotType,
+                          }}
+                        >
                         {(() => {
                           const activityData = activities.find((a) => a.id === activity.activityId);
                           if (!activityData) return `Activity: ${activity.activityId}`;
@@ -287,30 +297,47 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                           );
                         })()}
                       </SortableTimelineItem>
-                    ))}
+                      );
+                    })}
                   </div>
                 </SortableContext>
               </DndContext>
             )}
             {slot.meals.length > 0 && (
               <div className="space-y-1">
-                {slot.meals.map((meal) => (
-                  <SortableTimelineItem
-                    key={meal.id}
-                    id={meal.id}
-                    onDelete={() => handleDeleteMeal(slotType, meal.id)}
-                    photos={meal.photos}
-                    onPhotoUploaded={
-                      onAddPhotoToMeal
-                        ? (photoUrl) => onAddPhotoToMeal(day.date, slotType, meal.id, photoUrl)
-                        : undefined
-                    }
-                    onDeletePhoto={
-                      onRemovePhotoFromMeal
-                        ? (photoUrl) => onRemovePhotoFromMeal(day.date, slotType, meal.id, photoUrl)
-                        : undefined
-                    }
-                  >
+                {slot.meals.map((meal) => {
+                  const restaurant = meal.restaurantId ? restaurants.find((r) => r.id === meal.restaurantId) : null;
+                  return (
+                    <SortableTimelineItem
+                      key={meal.id}
+                      id={meal.id}
+                      onDelete={() => handleDeleteMeal(slotType, meal.id)}
+                      photos={meal.photos}
+                      onPhotoUploaded={
+                        onAddPhotoToMeal
+                          ? (photo) => onAddPhotoToMeal(day.date, slotType, meal.id, photo)
+                          : undefined
+                      }
+                      onDeletePhoto={
+                        onRemovePhotoFromMeal
+                          ? (photoUrl) => onRemovePhotoFromMeal(day.date, slotType, meal.id, photoUrl)
+                          : undefined
+                      }
+                      photoMetadata={{
+                        location: restaurant
+                          ? {
+                              restaurantId: restaurant.id,
+                              restaurantName: restaurant.name,
+                            }
+                          : meal.customMeal
+                          ? {
+                              customLocation: meal.customMeal.whatWereEating,
+                            }
+                          : undefined,
+                        date: day.date,
+                        timeSlot: slotType,
+                      }}
+                    >
                     {(() => {
                       const restaurant = meal.restaurantId ? restaurants.find((r) => r.id === meal.restaurantId) : null;
                       return (
@@ -347,7 +374,8 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                       );
                     })()}
                   </SortableTimelineItem>
-                ))}
+                  );
+                })}
               </div>
             )}
             {/* Add More Actions - Always show when not locked */}

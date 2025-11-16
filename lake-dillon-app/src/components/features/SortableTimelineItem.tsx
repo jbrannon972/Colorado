@@ -4,14 +4,25 @@ import { useState, useEffect } from 'react';
 import { Icons } from '../ui';
 import { PhotoUpload } from './PhotoUpload';
 import { PhotoGallery } from './PhotoGallery';
+import type { Photo } from '../../types';
 
 interface SortableTimelineItemProps {
   id: string;
   children: React.ReactNode;
   onDelete?: () => void;
-  photos?: string[];
-  onPhotoUploaded?: (photoUrl: string) => void;
+  photos?: Photo[];
+  onPhotoUploaded?: (photo: Photo) => void;
   onDeletePhoto?: (photoUrl: string) => void;
+  photoMetadata?: {
+    location?: {
+      activityId?: string;
+      activityName?: string;
+      restaurantId?: string;
+      restaurantName?: string;
+    };
+    date?: string;
+    timeSlot?: 'morning' | 'afternoon' | 'evening';
+  };
 }
 
 export const SortableTimelineItem: React.FC<SortableTimelineItemProps> = ({
@@ -21,6 +32,7 @@ export const SortableTimelineItem: React.FC<SortableTimelineItemProps> = ({
   photos = [],
   onPhotoUploaded,
   onDeletePhoto,
+  photoMetadata,
 }) => {
   const {
     attributes,
@@ -70,7 +82,13 @@ export const SortableTimelineItem: React.FC<SortableTimelineItemProps> = ({
           </div>
           <div className="flex items-center gap-1">
             {onPhotoUploaded && (
-              <PhotoUpload eventId={id} onPhotoUploaded={onPhotoUploaded} />
+              <PhotoUpload
+                eventId={id}
+                onPhotoUploaded={onPhotoUploaded}
+                defaultLocation={photoMetadata?.location}
+                defaultDate={photoMetadata?.date}
+                defaultTimeSlot={photoMetadata?.timeSlot}
+              />
             )}
             {onDelete && (
               <button

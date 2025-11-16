@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { initialTimeline } from '../data/timeline';
-import type { DayTimeline, TimeSlotType, ActivityInstance, MealInstance } from '../types';
+import type { DayTimeline, TimeSlotType, ActivityInstance, MealInstance, Photo } from '../types';
 
 const TRIP_ID = 'lake-dillon-thanksgiving-2025';
 
@@ -252,7 +252,7 @@ export const useTimeline = () => {
     date: string,
     slot: TimeSlotType,
     activityInstanceId: string,
-    photoUrl: string
+    photo: Photo
   ) => {
     const updatedTimeline = timeline.map((day) => {
       if (day.date === date) {
@@ -264,7 +264,7 @@ export const useTimeline = () => {
               ...day.timeSlots[slot],
               activities: day.timeSlots[slot].activities.map((a) =>
                 a.id === activityInstanceId
-                  ? { ...a, photos: [...(a.photos || []), photoUrl] }
+                  ? { ...a, photos: [...(a.photos || []), photo] }
                   : a
               ),
             },
@@ -282,7 +282,7 @@ export const useTimeline = () => {
     date: string,
     slot: TimeSlotType,
     mealInstanceId: string,
-    photoUrl: string
+    photo: Photo
   ) => {
     const updatedTimeline = timeline.map((day) => {
       if (day.date === date) {
@@ -294,7 +294,7 @@ export const useTimeline = () => {
               ...day.timeSlots[slot],
               meals: day.timeSlots[slot].meals.map((m) =>
                 m.id === mealInstanceId
-                  ? { ...m, photos: [...(m.photos || []), photoUrl] }
+                  ? { ...m, photos: [...(m.photos || []), photo] }
                   : m
               ),
             },
@@ -324,7 +324,7 @@ export const useTimeline = () => {
               ...day.timeSlots[slot],
               activities: day.timeSlots[slot].activities.map((a) =>
                 a.id === activityInstanceId
-                  ? { ...a, photos: (a.photos || []).filter((p) => p !== photoUrl) }
+                  ? { ...a, photos: (a.photos || []).filter((p) => p.url !== photoUrl) }
                   : a
               ),
             },
@@ -354,7 +354,7 @@ export const useTimeline = () => {
               ...day.timeSlots[slot],
               meals: day.timeSlots[slot].meals.map((m) =>
                 m.id === mealInstanceId
-                  ? { ...m, photos: (m.photos || []).filter((p) => p !== photoUrl) }
+                  ? { ...m, photos: (m.photos || []).filter((p) => p.url !== photoUrl) }
                   : m
               ),
             },
