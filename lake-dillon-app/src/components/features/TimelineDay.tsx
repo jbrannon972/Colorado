@@ -13,6 +13,10 @@ interface TimelineDayProps {
   onReorderActivities?: (date: string, slot: TimeSlotType, newOrder: string[]) => void;
   onRemoveActivity?: (date: string, slot: TimeSlotType, activityId: string) => void;
   onRemoveMeal?: (date: string, slot: TimeSlotType, mealId: string) => void;
+  onAddPhotoToActivity?: (date: string, slot: TimeSlotType, activityId: string, photoUrl: string) => void;
+  onAddPhotoToMeal?: (date: string, slot: TimeSlotType, mealId: string, photoUrl: string) => void;
+  onRemovePhotoFromActivity?: (date: string, slot: TimeSlotType, activityId: string, photoUrl: string) => void;
+  onRemovePhotoFromMeal?: (date: string, slot: TimeSlotType, mealId: string, photoUrl: string) => void;
 }
 
 interface DeletedItem {
@@ -29,6 +33,11 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
   onReorderActivities,
   onRemoveActivity,
   onRemoveMeal,
+  // Photo handlers - ready for integration
+  // onAddPhotoToActivity,
+  // onAddPhotoToMeal,
+  // onRemovePhotoFromActivity,
+  // onRemovePhotoFromMeal,
 }) => {
   const [localDay, setLocalDay] = useState(day);
   const [deletedItem, setDeletedItem] = useState<DeletedItem | null>(null);

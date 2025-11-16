@@ -247,6 +247,126 @@ export const useTimeline = () => {
     return await saveTimeline(updatedTimeline);
   };
 
+  // Add photo to activity
+  const addPhotoToActivity = async (
+    date: string,
+    slot: TimeSlotType,
+    activityInstanceId: string,
+    photoUrl: string
+  ) => {
+    const updatedTimeline = timeline.map((day) => {
+      if (day.date === date) {
+        return {
+          ...day,
+          timeSlots: {
+            ...day.timeSlots,
+            [slot]: {
+              ...day.timeSlots[slot],
+              activities: day.timeSlots[slot].activities.map((a) =>
+                a.id === activityInstanceId
+                  ? { ...a, photos: [...(a.photos || []), photoUrl] }
+                  : a
+              ),
+            },
+          },
+        };
+      }
+      return day;
+    });
+
+    return await saveTimeline(updatedTimeline);
+  };
+
+  // Add photo to meal
+  const addPhotoToMeal = async (
+    date: string,
+    slot: TimeSlotType,
+    mealInstanceId: string,
+    photoUrl: string
+  ) => {
+    const updatedTimeline = timeline.map((day) => {
+      if (day.date === date) {
+        return {
+          ...day,
+          timeSlots: {
+            ...day.timeSlots,
+            [slot]: {
+              ...day.timeSlots[slot],
+              meals: day.timeSlots[slot].meals.map((m) =>
+                m.id === mealInstanceId
+                  ? { ...m, photos: [...(m.photos || []), photoUrl] }
+                  : m
+              ),
+            },
+          },
+        };
+      }
+      return day;
+    });
+
+    return await saveTimeline(updatedTimeline);
+  };
+
+  // Remove photo from activity
+  const removePhotoFromActivity = async (
+    date: string,
+    slot: TimeSlotType,
+    activityInstanceId: string,
+    photoUrl: string
+  ) => {
+    const updatedTimeline = timeline.map((day) => {
+      if (day.date === date) {
+        return {
+          ...day,
+          timeSlots: {
+            ...day.timeSlots,
+            [slot]: {
+              ...day.timeSlots[slot],
+              activities: day.timeSlots[slot].activities.map((a) =>
+                a.id === activityInstanceId
+                  ? { ...a, photos: (a.photos || []).filter((p) => p !== photoUrl) }
+                  : a
+              ),
+            },
+          },
+        };
+      }
+      return day;
+    });
+
+    return await saveTimeline(updatedTimeline);
+  };
+
+  // Remove photo from meal
+  const removePhotoFromMeal = async (
+    date: string,
+    slot: TimeSlotType,
+    mealInstanceId: string,
+    photoUrl: string
+  ) => {
+    const updatedTimeline = timeline.map((day) => {
+      if (day.date === date) {
+        return {
+          ...day,
+          timeSlots: {
+            ...day.timeSlots,
+            [slot]: {
+              ...day.timeSlots[slot],
+              meals: day.timeSlots[slot].meals.map((m) =>
+                m.id === mealInstanceId
+                  ? { ...m, photos: (m.photos || []).filter((p) => p !== photoUrl) }
+                  : m
+              ),
+            },
+          },
+        };
+      }
+      return day;
+    });
+
+    return await saveTimeline(updatedTimeline);
+  };
+
   return {
     timeline,
     loading,
@@ -258,5 +378,9 @@ export const useTimeline = () => {
     reorderActivities,
     updateActivity,
     updateMeal,
+    addPhotoToActivity,
+    addPhotoToMeal,
+    removePhotoFromActivity,
+    removePhotoFromMeal,
   };
 };

@@ -85,6 +85,7 @@ export interface ActivityInstance {
   notes?: string;
   confirmedParticipants?: string[];
   startTime?: string;
+  photos?: string[]; // Array of Firebase Storage URLs
 }
 
 export interface MealInstance {
@@ -104,6 +105,7 @@ export interface MealInstance {
   reservationRequired?: boolean;
   reservationTime?: string;
   reservationConfirmed?: boolean;
+  photos?: string[]; // Array of Firebase Storage URLs
 }
 
 export interface TimeSlot {

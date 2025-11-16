@@ -15,7 +15,17 @@ export const TimelinePage: React.FC = () => {
   } | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const { timeline, loading, addMealToTimeline } = useTimeline();
+  const {
+    timeline,
+    loading,
+    addMealToTimeline,
+    removeActivity,
+    removeMeal,
+    addPhotoToActivity,
+    addPhotoToMeal,
+    removePhotoFromActivity,
+    removePhotoFromMeal,
+  } = useTimeline();
 
   const handleDayChange = (newIndex: number) => {
     if (newIndex === selectedDayIndex) return;
@@ -131,6 +141,12 @@ export const TimelinePage: React.FC = () => {
             day={timeline[selectedDayIndex]}
             onAddActivity={handleAddActivity}
             onAddMeal={handleAddMeal}
+            onRemoveActivity={removeActivity}
+            onRemoveMeal={removeMeal}
+            onAddPhotoToActivity={addPhotoToActivity}
+            onAddPhotoToMeal={addPhotoToMeal}
+            onRemovePhotoFromActivity={removePhotoFromActivity}
+            onRemovePhotoFromMeal={removePhotoFromMeal}
           />
         </div>
 
