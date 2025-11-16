@@ -177,7 +177,8 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
 
   const renderTimeSlot = (slotType: TimeSlotType, slotName: string) => {
     const slot = localDay.timeSlots[slotType];
-    const isLocked = !slot.isEmpty && (localDay.tripPhase === 'ARRIVAL_DAY' || localDay.tripPhase === 'DEPARTURE_DAY');
+    const isSlotEmpty = slot.activities.length === 0 && slot.meals.length === 0;
+    const isLocked = !isSlotEmpty && (localDay.tripPhase === 'ARRIVAL_DAY' || localDay.tripPhase === 'DEPARTURE_DAY');
 
     return (
       <Card key={slotType} className="space-y-sm">
@@ -200,7 +201,7 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
           </div>
         )}
 
-        {!isLocked && slot.isEmpty && (
+        {!isLocked && isSlotEmpty && (
           <div className="space-y-sm">
             <p className="text-body-compact text-pale-ice opacity-70">
               No activities planned
@@ -228,7 +229,7 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
           </div>
         )}
 
-        {!isLocked && !slot.isEmpty && (
+        {!isLocked && !isSlotEmpty && (
           <div className="space-y-2">
             {slot.activities.length > 0 && (
               <DndContext
