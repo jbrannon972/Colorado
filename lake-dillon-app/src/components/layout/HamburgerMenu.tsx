@@ -20,8 +20,8 @@ const menuItems: MenuItem[] = [
 
 export const HamburgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(null);
   const navigate = useNavigate();
-  const portalContainerRef = useRef<HTMLDivElement | null>(null);
 
   // Create dedicated portal container and lock body scroll
   useEffect(() => {
@@ -31,7 +31,7 @@ export const HamburgerMenu: React.FC = () => {
       portalDiv.id = 'hamburger-menu-portal';
       portalDiv.style.cssText = 'position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; z-index: 999999 !important; pointer-events: none !important;';
       document.body.appendChild(portalDiv);
-      portalContainerRef.current = portalDiv;
+      setPortalContainer(portalDiv);
 
       // Lock body scroll
       document.body.style.overflow = 'hidden';
@@ -41,10 +41,10 @@ export const HamburgerMenu: React.FC = () => {
 
       return () => {
         // Cleanup
-        if (portalContainerRef.current) {
-          document.body.removeChild(portalContainerRef.current);
-          portalContainerRef.current = null;
+        if (portalDiv && document.body.contains(portalDiv)) {
+          document.body.removeChild(portalDiv);
         }
+        setPortalContainer(null);
         document.body.style.overflow = '';
         document.body.style.position = '';
         document.body.style.width = '';
@@ -198,7 +198,7 @@ export const HamburgerMenu: React.FC = () => {
       </button>
 
       {/* Portal to dedicated container */}
-      {portalContainerRef.current && menuContent && createPortal(menuContent, portalContainerRef.current)}
+      {portalContainer && menuContent && createPortal(menuContent, portalContainer)}
     </>
   );
 };
