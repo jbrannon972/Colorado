@@ -33,11 +33,10 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
   onReorderActivities,
   onRemoveActivity,
   onRemoveMeal,
-  // Photo handlers - ready for integration
-  // onAddPhotoToActivity,
-  // onAddPhotoToMeal,
-  // onRemovePhotoFromActivity,
-  // onRemovePhotoFromMeal,
+  onAddPhotoToActivity,
+  onAddPhotoToMeal,
+  onRemovePhotoFromActivity,
+  onRemovePhotoFromMeal,
 }) => {
   const [localDay, setLocalDay] = useState(day);
   const [deletedItem, setDeletedItem] = useState<DeletedItem | null>(null);
@@ -241,6 +240,17 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                         key={activity.id}
                         id={activity.id}
                         onDelete={() => handleDeleteActivity(slotType, activity.id)}
+                        photos={activity.photos}
+                        onPhotoUploaded={
+                          onAddPhotoToActivity
+                            ? (photoUrl) => onAddPhotoToActivity(day.date, slotType, activity.id, photoUrl)
+                            : undefined
+                        }
+                        onDeletePhoto={
+                          onRemovePhotoFromActivity
+                            ? (photoUrl) => onRemovePhotoFromActivity(day.date, slotType, activity.id, photoUrl)
+                            : undefined
+                        }
                       >
                         Activity: {activity.activityId}
                       </SortableTimelineItem>
@@ -256,6 +266,17 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                     key={meal.id}
                     id={meal.id}
                     onDelete={() => handleDeleteMeal(slotType, meal.id)}
+                    photos={meal.photos}
+                    onPhotoUploaded={
+                      onAddPhotoToMeal
+                        ? (photoUrl) => onAddPhotoToMeal(day.date, slotType, meal.id, photoUrl)
+                        : undefined
+                    }
+                    onDeletePhoto={
+                      onRemovePhotoFromMeal
+                        ? (photoUrl) => onRemovePhotoFromMeal(day.date, slotType, meal.id, photoUrl)
+                        : undefined
+                    }
                   >
                     Meal: {meal.type}
                   </SortableTimelineItem>
