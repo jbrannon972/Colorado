@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import type { DayTimeline, TimeSlotType, Photo } from '../../types';
+import type { DayTimeline, TimeSlotType, Photo, Activity, Restaurant } from '../../types';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { Card, Button, Icons, Toast } from '../ui';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import { SortableTimelineItem } from './SortableTimelineItem';
+import { ActivityDetailModal } from './ActivityDetailModal';
+import { RestaurantDetailModal } from './RestaurantDetailModal';
 import { activities } from '../../data/activities';
 import { restaurants } from '../../data/restaurants';
 
@@ -42,6 +44,8 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
 }) => {
   const [localDay, setLocalDay] = useState(day);
   const [deletedItem, setDeletedItem] = useState<DeletedItem | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
 
   // Sync local state when parent day prop changes
   useEffect(() => {
@@ -250,6 +254,7 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                           key={activity.id}
                           id={activity.id}
                           onDelete={() => handleDeleteActivity(slotType, activity.id)}
+                          onClick={activityData ? () => setSelectedActivity(activityData) : undefined}
                           photos={activity.photos}
                           onPhotoUploaded={
                             onAddPhotoToActivity
@@ -274,19 +279,22 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                           const activityData = activities.find((a) => a.id === activity.activityId);
                           if (!activityData) return `Activity: ${activity.activityId}`;
                           return (
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2">
-                                <Icons.MapPin size={14} className="text-accent-blue flex-shrink-0" />
-                                <span className="font-semibold">{activityData.name}</span>
+                            <div className="space-y-2 w-full">
+                              <div className="flex items-center gap-2 justify-between">
+                                <div className="flex items-center gap-2 flex-1 min-w-0">
+                                  <Icons.Target size={16} className="text-accent-blue flex-shrink-0" />
+                                  <span className="font-semibold text-base truncate">{activityData.name}</span>
+                                </div>
+                                <Icons.ArrowRight size={16} className="text-pale-ice flex-shrink-0" />
                               </div>
-                              <div className="text-body-compact text-pale-ice flex items-center gap-3">
-                                <span>{activityData.durationHours.min}-{activityData.durationHours.max}h</span>
+                              <div className="text-body-compact text-pale-ice flex flex-wrap items-center gap-x-3 gap-y-1">
+                                <span className="whitespace-nowrap">{activityData.durationHours.min}-{activityData.durationHours.max}h</span>
                                 <span>•</span>
-                                <span>{activityData.driveTimeMinutes} min drive</span>
+                                <span className="whitespace-nowrap">{activityData.driveTimeMinutes} min</span>
                                 {activityData.toddlerFriendly && (
                                   <>
                                     <span>•</span>
-                                    <Icons.Baby size={12} className="text-success-teal inline" />
+                                    <Icons.Baby size={14} className="text-success-teal" />
                                   </>
                                 )}
                               </div>
@@ -312,6 +320,7 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                       key={meal.id}
                       id={meal.id}
                       onDelete={() => handleDeleteMeal(slotType, meal.id)}
+                      onClick={restaurant ? () => setSelectedRestaurant(restaurant) : undefined}
                       photos={meal.photos}
                       onPhotoUploaded={
                         onAddPhotoToMeal
@@ -341,22 +350,27 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                     {(() => {
                       const restaurant = meal.restaurantId ? restaurants.find((r) => r.id === meal.restaurantId) : null;
                       return (
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Icons.Utensils size={14} className="text-accent-blue flex-shrink-0" />
-                            <span className="font-semibold capitalize">{meal.type}</span>
-                            {restaurant && <span>• {restaurant.name}</span>}
-                            {meal.customMeal && <span>• {meal.customMeal.whatWereEating}</span>}
+                        <div className="space-y-2 w-full">
+                          <div className="flex items-center gap-2 justify-between">
+                            <div className="flex items-center gap-2 flex-1 min-w-0">
+                              <Icons.Utensils size={16} className="text-accent-blue flex-shrink-0" />
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2 flex-1 min-w-0">
+                                <span className="font-semibold text-base capitalize">{meal.type}</span>
+                                {restaurant && <span className="text-frost-white truncate">• {restaurant.name}</span>}
+                                {meal.customMeal && <span className="text-frost-white truncate">• {meal.customMeal.whatWereEating}</span>}
+                              </div>
+                            </div>
+                            {restaurant && <Icons.ArrowRight size={16} className="text-pale-ice flex-shrink-0" />}
                           </div>
                           {restaurant && (
-                            <div className="text-body-compact text-pale-ice flex items-center gap-3">
-                              <span>{restaurant.town}</span>
+                            <div className="text-body-compact text-pale-ice flex flex-wrap items-center gap-x-3 gap-y-1">
+                              <span className="whitespace-nowrap">{restaurant.town}</span>
                               <span>•</span>
-                              <span>{restaurant.driveTimeFromSpinnaker} min</span>
+                              <span className="whitespace-nowrap">{restaurant.driveTimeFromSpinnaker} min</span>
                               {restaurant.totalForFamilyOf5 && (
                                 <>
                                   <span>•</span>
-                                  <span>${restaurant.totalForFamilyOf5} family</span>
+                                  <span className="whitespace-nowrap">${restaurant.totalForFamilyOf5}</span>
                                 </>
                               )}
                             </div>
@@ -365,8 +379,8 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                             <p className="text-body-compact text-pale-ice italic">{meal.customMeal.notes}</p>
                           )}
                           {meal.reservationRequired && (
-                            <div className="text-body-compact text-info-slate flex items-center gap-1">
-                              <Icons.Calendar size={12} />
+                            <div className="text-body-compact text-info-slate flex items-center gap-2">
+                              <Icons.Calendar size={14} />
                               <span>Reservation {meal.reservationConfirmed ? 'confirmed' : 'needed'}</span>
                             </div>
                           )}
@@ -465,6 +479,22 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
           }}
           onClose={() => setDeletedItem(null)}
           duration={4000}
+        />
+      )}
+
+      {/* Activity Detail Modal */}
+      {selectedActivity && (
+        <ActivityDetailModal
+          activity={selectedActivity}
+          onClose={() => setSelectedActivity(null)}
+        />
+      )}
+
+      {/* Restaurant Detail Modal */}
+      {selectedRestaurant && (
+        <RestaurantDetailModal
+          restaurant={selectedRestaurant}
+          onClose={() => setSelectedRestaurant(null)}
         />
       )}
     </div>
