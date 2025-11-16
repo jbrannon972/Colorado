@@ -4,6 +4,7 @@ import { ActivitiesPage } from './pages/ActivitiesPage';
 import { DiningPage } from './pages/DiningPage';
 import { PackingPage } from './pages/PackingPage';
 import { FamilyPage } from './pages/FamilyPage';
+import { GalleryPage } from './pages/GalleryPage';
 import { SettingsPage } from './pages/SettingsPage';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/dining" element={<DiningPage />} />
         <Route path="/packing" element={<PackingPage />} />
         <Route path="/family" element={<FamilyPage />} />
+        <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </BrowserRouter>

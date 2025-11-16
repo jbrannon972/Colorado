@@ -13,6 +13,7 @@ const menuItems: MenuItem[] = [
   { label: 'Timeline', path: '/', icon: 'Calendar' },
   { label: 'Activities', path: '/activities', icon: 'Target' },
   { label: 'Dining', path: '/dining', icon: 'Utensils' },
+  { label: 'Gallery', path: '/gallery', icon: 'Image' },
   { label: 'Packing', path: '/packing', icon: 'CheckSquare' },
   { label: 'Family', path: '/family', icon: 'Users' },
   { label: 'Settings', path: '/settings', icon: 'Settings' },

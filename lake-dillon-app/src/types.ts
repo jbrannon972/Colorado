@@ -78,6 +78,24 @@ export interface Restaurant {
   specialThanksgivingMenu?: boolean;
 }
 
+export interface Photo {
+  id: string;
+  url: string;
+  uploadedAt: number;
+  uploadedBy?: string;
+  description?: string;
+  location?: {
+    activityId?: string;
+    activityName?: string;
+    restaurantId?: string;
+    restaurantName?: string;
+    customLocation?: string;
+  };
+  date?: string; // The date this photo was taken (from timeline)
+  timeSlot?: TimeSlotType;
+  tags?: string[];
+}
+
 export interface ActivityInstance {
   id: string;
   activityId: string;
@@ -85,7 +103,7 @@ export interface ActivityInstance {
   notes?: string;
   confirmedParticipants?: string[];
   startTime?: string;
-  photos?: string[]; // Array of Firebase Storage URLs
+  photos?: Photo[]; // Array of photo metadata
 }
 
 export interface MealInstance {
@@ -105,7 +123,7 @@ export interface MealInstance {
   reservationRequired?: boolean;
   reservationTime?: string;
   reservationConfirmed?: boolean;
-  photos?: string[]; // Array of Firebase Storage URLs
+  photos?: Photo[]; // Array of photo metadata
 }
 
 export interface TimeSlot {
