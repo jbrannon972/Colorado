@@ -5,6 +5,8 @@ import { Card, Button, Icons, Toast } from '../ui';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import { SortableTimelineItem } from './SortableTimelineItem';
+import { activities } from '../../data/activities';
+import { restaurants } from '../../data/restaurants';
 
 interface TimelineDayProps {
   day: DayTimeline;
@@ -258,7 +260,32 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                             : undefined
                         }
                       >
-                        Activity: {activity.activityId}
+                        {(() => {
+                          const activityData = activities.find((a) => a.id === activity.activityId);
+                          if (!activityData) return `Activity: ${activity.activityId}`;
+                          return (
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <Icons.MapPin size={14} className="text-accent-blue flex-shrink-0" />
+                                <span className="font-semibold">{activityData.name}</span>
+                              </div>
+                              <div className="text-body-compact text-pale-ice flex items-center gap-3">
+                                <span>{activityData.durationHours.min}-{activityData.durationHours.max}h</span>
+                                <span>•</span>
+                                <span>{activityData.driveTimeMinutes} min drive</span>
+                                {activityData.toddlerFriendly && (
+                                  <>
+                                    <span>•</span>
+                                    <Icons.Baby size={12} className="text-success-teal inline" />
+                                  </>
+                                )}
+                              </div>
+                              {activity.notes && (
+                                <p className="text-body-compact text-pale-ice italic">{activity.notes}</p>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </SortableTimelineItem>
                     ))}
                   </div>
@@ -284,9 +311,64 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
                         : undefined
                     }
                   >
-                    Meal: {meal.type}
+                    {(() => {
+                      const restaurant = meal.restaurantId ? restaurants.find((r) => r.id === meal.restaurantId) : null;
+                      return (
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Icons.Utensils size={14} className="text-accent-blue flex-shrink-0" />
+                            <span className="font-semibold capitalize">{meal.type}</span>
+                            {restaurant && <span>• {restaurant.name}</span>}
+                            {meal.customMeal && <span>• {meal.customMeal.whatWereEating}</span>}
+                          </div>
+                          {restaurant && (
+                            <div className="text-body-compact text-pale-ice flex items-center gap-3">
+                              <span>{restaurant.town}</span>
+                              <span>•</span>
+                              <span>{restaurant.driveTimeFromSpinnaker} min</span>
+                              {restaurant.totalForFamilyOf5 && (
+                                <>
+                                  <span>•</span>
+                                  <span>${restaurant.totalForFamilyOf5} family</span>
+                                </>
+                              )}
+                            </div>
+                          )}
+                          {meal.customMeal?.notes && (
+                            <p className="text-body-compact text-pale-ice italic">{meal.customMeal.notes}</p>
+                          )}
+                          {meal.reservationRequired && (
+                            <div className="text-body-compact text-info-slate flex items-center gap-1">
+                              <Icons.Calendar size={12} />
+                              <span>Reservation {meal.reservationConfirmed ? 'confirmed' : 'needed'}</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </SortableTimelineItem>
                 ))}
+              </div>
+            )}
+            {/* Add More Actions - Always show when not locked */}
+            {onAddActivity && onAddMeal && (
+              <div className="flex gap-2 pt-2 border-t border-pale-ice border-opacity-10">
+                <Button
+                  variant="compact"
+                  onClick={() => onAddActivity(localDay.date, slotType)}
+                  className="flex-1"
+                >
+                  <Icons.Plus size={14} />
+                  Activity
+                </Button>
+                <Button
+                  variant="compact"
+                  onClick={() => onAddMeal(localDay.date, slotType)}
+                  className="flex-1"
+                >
+                  <Icons.Plus size={14} />
+                  Meal
+                </Button>
               </div>
             )}
           </div>
