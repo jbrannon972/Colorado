@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { DayTimeline, TimeSlotType } from '../../types';
+import type { DayTimeline, TimeSlotType, Photo } from '../../types';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { Card, Button, Icons, Toast } from '../ui';
 import { DndContext, closestCenter } from '@dnd-kit/core';
@@ -15,8 +15,8 @@ interface TimelineDayProps {
   onReorderActivities?: (date: string, slot: TimeSlotType, newOrder: string[]) => void;
   onRemoveActivity?: (date: string, slot: TimeSlotType, activityId: string) => void;
   onRemoveMeal?: (date: string, slot: TimeSlotType, mealId: string) => void;
-  onAddPhotoToActivity?: (date: string, slot: TimeSlotType, activityId: string, photoUrl: string) => void;
-  onAddPhotoToMeal?: (date: string, slot: TimeSlotType, mealId: string, photoUrl: string) => void;
+  onAddPhotoToActivity?: (date: string, slot: TimeSlotType, activityId: string, photo: Photo) => void;
+  onAddPhotoToMeal?: (date: string, slot: TimeSlotType, mealId: string, photo: Photo) => void;
   onRemovePhotoFromActivity?: (date: string, slot: TimeSlotType, activityId: string, photoUrl: string) => void;
   onRemovePhotoFromMeal?: (date: string, slot: TimeSlotType, mealId: string, photoUrl: string) => void;
 }

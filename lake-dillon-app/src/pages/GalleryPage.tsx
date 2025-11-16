@@ -3,8 +3,6 @@ import { Layout } from '../components/layout';
 import { Card, Button, Icons, Chip, Input } from '../components/ui';
 import { useTimeline } from '../hooks/useTimeline';
 import type { Photo } from '../types';
-import { activities } from '../data/activities';
-import { restaurants } from '../data/restaurants';
 
 export const GalleryPage: React.FC = () => {
   const { timeline, loading } = useTimeline();

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { PhotoUpload } from './PhotoUpload';
 import { Icons, Button } from '../ui';
+import type { Photo } from '../../types';
 
 interface TimelineItemPhotosProps {
   itemId: string;
-  photos?: string[];
-  onPhotoAdded: (photoUrl: string) => void;
+  photos?: Photo[];
+  onPhotoAdded: (photo: Photo) => void;
   onPhotoRemoved: (photoUrl: string) => void;
 }
 
@@ -15,11 +16,11 @@ export const TimelineItemPhotos: React.FC<TimelineItemPhotosProps> = ({
   onPhotoAdded,
   onPhotoRemoved,
 }) => {
-  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const [showUpload, setShowUpload] = useState(false);
 
-  const handlePhotoClick = (photoUrl: string) => {
-    setSelectedPhoto(photoUrl);
+  const handlePhotoClick = (photo: Photo) => {
+    setSelectedPhoto(photo);
   };
 
   const handleCloseModal = () => {
@@ -30,7 +31,7 @@ export const TimelineItemPhotos: React.FC<TimelineItemPhotosProps> = ({
     e.stopPropagation();
     if (confirm('Delete this photo?')) {
       onPhotoRemoved(photoUrl);
-      if (selectedPhoto === photoUrl) {
+      if (selectedPhoto?.url === photoUrl) {
         setSelectedPhoto(null);
       }
     }
@@ -41,19 +42,19 @@ export const TimelineItemPhotos: React.FC<TimelineItemPhotosProps> = ({
       {/* Photo Grid */}
       {photos.length > 0 && (
         <div className="grid grid-cols-4 gap-2">
-          {photos.map((photoUrl) => (
+          {photos.map((photo) => (
             <div
-              key={photoUrl}
+              key={photo.id}
               className="relative aspect-square rounded-subtle overflow-hidden cursor-pointer group"
-              onClick={() => handlePhotoClick(photoUrl)}
+              onClick={() => handlePhotoClick(photo)}
             >
               <img
-                src={photoUrl}
-                alt="Timeline photo"
+                src={photo.url}
+                alt={photo.description || 'Timeline photo'}
                 className="w-full h-full object-cover transition-transform group-hover:scale-110"
               />
               <button
-                onClick={(e) => handleDeletePhoto(photoUrl, e)}
+                onClick={(e) => handleDeletePhoto(photo.url, e)}
                 className="absolute top-1 right-1 bg-deep-navy bg-opacity-80 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <Icons.X size={12} className="text-frost-white" />
@@ -69,8 +70,8 @@ export const TimelineItemPhotos: React.FC<TimelineItemPhotosProps> = ({
           <>
             <PhotoUpload
               eventId={itemId}
-              onPhotoUploaded={(url) => {
-                onPhotoAdded(url);
+              onPhotoUploaded={(photo) => {
+                onPhotoAdded(photo);
                 setShowUpload(false);
               }}
             />
@@ -108,13 +109,13 @@ export const TimelineItemPhotos: React.FC<TimelineItemPhotosProps> = ({
             <Icons.X size={24} className="text-frost-white" />
           </button>
           <img
-            src={selectedPhoto}
-            alt="Full size"
+            src={selectedPhoto.url}
+            alt={selectedPhoto.description || 'Full size'}
             className="max-w-[90vw] max-h-[90vh] object-contain"
             onClick={(e) => e.stopPropagation()}
           />
           <button
-            onClick={(e) => handleDeletePhoto(selectedPhoto, e)}
+            onClick={(e) => handleDeletePhoto(selectedPhoto.url, e)}
             className="absolute bottom-4 right-4 bg-error-rose bg-opacity-80 rounded-full p-3 touch-opacity"
           >
             <Icons.Trash size={20} className="text-frost-white" />

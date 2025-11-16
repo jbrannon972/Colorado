@@ -31,6 +31,7 @@ import {
   CheckCircle,
   Camera,
   Phone,
+  Download,
 } from 'lucide-react';
 
 export const Icons = {
@@ -65,6 +66,7 @@ export const Icons = {
   CheckCircle,
   Camera,
   Phone,
+  Download,
 };
 
 export type IconName = keyof typeof Icons;

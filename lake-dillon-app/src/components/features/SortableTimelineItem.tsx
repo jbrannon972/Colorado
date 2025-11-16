@@ -19,6 +19,7 @@ interface SortableTimelineItemProps {
       activityName?: string;
       restaurantId?: string;
       restaurantName?: string;
+      customLocation?: string;
     };
     date?: string;
     timeSlot?: 'morning' | 'afternoon' | 'evening';

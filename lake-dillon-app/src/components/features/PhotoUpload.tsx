@@ -12,6 +12,7 @@ interface PhotoUploadProps {
     activityName?: string;
     restaurantId?: string;
     restaurantName?: string;
+    customLocation?: string;
   };
   defaultDate?: string;
   defaultTimeSlot?: 'morning' | 'afternoon' | 'evening';
