@@ -8,11 +8,11 @@ interface TopNavProps {
 
 export const TopNav: React.FC<TopNavProps> = ({ title, rightAction }) => {
   return (
-    <div className="sticky top-0 z-50 bg-deep-navy border-b border-pale-ice border-opacity-20 safe-top">
-      <div className="h-nav px-md flex items-center justify-between">
+    <div className="nav-bar safe-top">
+      <div className="h-full px-lg flex items-center justify-between">
         {/* Left: Title or Spacer */}
         {title ? (
-          <h2 className="text-h2 text-frost-white">{title}</h2>
+          <h3 className="text-h3 text-frost-white">{title}</h3>
         ) : (
           <div className="w-10"></div>
         )}

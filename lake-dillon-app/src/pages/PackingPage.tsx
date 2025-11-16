@@ -219,29 +219,29 @@ export const PackingPage: React.FC = () => {
         </Card>
 
         {/* Packing Items by Category */}
-        <div className="space-y-md">
+        <div className="space-y-xl">
           {categories.map((category) => {
             const items = itemsByCategory[category] || [];
             if (items.length === 0) return null;
 
             return (
-              <Card key={category} className="space-y-sm">
-                <h3 className="text-h2 text-frost-white">{category}</h3>
-                <div className="space-y-1">
+              <div key={category}>
+                <h3 className="text-h2 text-frost-white px-lg mb-md">{category}</h3>
+                <div className="-mx-lg">
                   {items.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center gap-2 bg-deep-navy bg-opacity-30 p-sm rounded-subtle"
+                      className="list-item flex items-center gap-3"
                     >
                       <button
                         onClick={() => togglePacked(item.id)}
-                        className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                        className={`flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-spring ${
                           item.packed
                             ? 'bg-accent-blue border-accent-blue'
                             : 'border-pale-ice border-opacity-40'
                         }`}
                       >
-                        {item.packed && <Icons.Check size={14} className="text-frost-white" />}
+                        {item.packed && <Icons.Check size={16} className="text-frost-white" />}
                       </button>
                       <span
                         className={`flex-1 text-body transition-all ${
@@ -255,15 +255,15 @@ export const PackingPage: React.FC = () => {
                       {!item.isDefault && (
                         <button
                           onClick={() => deleteItem(item.id)}
-                          className="text-pale-ice hover:text-error-rose transition-colors"
+                          className="btn-icon-small text-pale-ice"
                         >
-                          <Icons.Trash size={14} />
+                          <Icons.Trash size={16} />
                         </button>
                       )}
                     </div>
                   ))}
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>

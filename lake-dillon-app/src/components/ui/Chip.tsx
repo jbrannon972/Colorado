@@ -12,12 +12,12 @@ export const Chip: React.FC<ChipProps> = ({ label, selected = false, onClick, ic
     <button
       onClick={onClick}
       className={`
-        chip flex items-center gap-2 transition-smooth touch-opacity
+        chip gap-2
         ${selected ? 'chip-selected' : 'chip-unselected'}
       `}
     >
       {icon}
-      {label}
+      <span>{label}</span>
     </button>
   );
 };

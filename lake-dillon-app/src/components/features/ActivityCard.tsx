@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Activity } from '../../types';
-import { Card, Button, Icons, AddressLink } from '../ui';
+import { Button, Icons, AddressLink } from '../ui';
 
 interface ActivityCardProps {
   activity: Activity;
@@ -14,107 +14,70 @@ export const ActivityCard: React.FC<ActivityCardProps> = ({
   onMoreInfo,
 }) => {
   return (
-    <Card className="space-y-sm">
-      {/* Header */}
-      <div>
-        <h3 className="text-h3 text-frost-white">{activity.name}</h3>
-        <p className="text-label text-pale-ice mt-1">
-          {activity.category.join(' • ')} • {activity.town}
-        </p>
-      </div>
+    <div className="list-item">
+      <div className="flex items-start gap-3">
+        {/* Main Content - Tappable for More Info */}
+        <div
+          className="flex-1 space-y-2 cursor-pointer"
+          onClick={() => onMoreInfo && onMoreInfo(activity)}
+        >
+          {/* Title */}
+          <h3 className="text-h3 text-frost-white">{activity.name}</h3>
 
-      {/* Metadata */}
-      <div className="space-y-1 text-body-compact text-pale-ice">
-        <div className="flex items-center gap-2">
-          <Icons.Clock size={16} className="text-pale-ice" />
-          <span>
-            {activity.durationHours.min}-{activity.durationHours.max} hrs
-          </span>
-          <span className="mx-2">|</span>
-          <Icons.MapPin size={16} className="text-pale-ice" />
-          <span>{activity.driveTimeMinutes} min drive</span>
-        </div>
+          {/* Category */}
+          <p className="text-metadata">
+            {activity.category.join(' • ')}
+          </p>
 
-        {activity.costPerPerson && (
-          <div className="flex items-center gap-2">
-            <Icons.DollarSign size={16} className="text-pale-ice" />
-            <span>
-              ${activity.costPerPerson.min}-${activity.costPerPerson.max} per person
-            </span>
+          {/* Metadata Row */}
+          <div className="flex items-center gap-4 text-metadata flex-wrap">
+            <div className="flex items-center gap-1">
+              <Icons.Clock size={14} className="text-pale-ice" />
+              <span>{activity.durationHours.min}-{activity.durationHours.max} hrs</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Icons.MapPin size={14} className="text-pale-ice" />
+              <span>{activity.driveTimeMinutes} min</span>
+            </div>
+            {activity.costPerPerson && (
+              <div className="flex items-center gap-1">
+                <Icons.DollarSign size={14} className="text-pale-ice" />
+                <span>${activity.costPerPerson.min}-${activity.costPerPerson.max}</span>
+              </div>
+            )}
           </div>
-        )}
 
-        {/* Address (Google Maps Link) */}
-        {activity.address && (
-          <AddressLink
-            address={activity.address}
-            coordinates={activity.coordinates}
-            name={activity.name}
-            className="text-pale-ice"
-          />
-        )}
+          {/* Family Suitability Icons */}
+          <div className="flex items-center gap-3 text-metadata">
+            {activity.toddlerFriendly && (
+              <div className="flex items-center gap-1 text-success-teal">
+                <Icons.Baby size={14} />
+                <span>Toddler OK</span>
+              </div>
+            )}
+            {activity.pregnancySafe && (
+              <div className="flex items-center gap-1 text-success-teal">
+                <Icons.Pregnant size={14} />
+                <span>Pregnancy Safe</span>
+              </div>
+            )}
+          </div>
+        </div>
 
-        {/* Website */}
-        {activity.website && (
-          <button
-            onClick={() => window.open(activity.website, '_blank', 'noopener,noreferrer')}
-            className="flex items-start gap-2 text-left transition-smooth hover:text-accent-blue text-pale-ice"
+        {/* Add Button */}
+        {onAddToDay && (
+          <Button
+            variant="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToDay(activity);
+            }}
+            aria-label="Add to day"
           >
-            <Icons.ExternalLink size={14} className="mt-0.5 flex-shrink-0" />
-            <span className="text-body-compact underline">Visit Website</span>
-          </button>
+            <Icons.Plus size={20} className="text-accent-blue" />
+          </Button>
         )}
       </div>
-
-      {/* Family Suitability */}
-      <div className="flex items-center gap-3 text-body-compact">
-        <div className="flex items-center gap-1">
-          <Icons.Baby size={16} className={activity.toddlerFriendly ? 'text-success-teal' : 'text-error-rose'} />
-          <span className={activity.toddlerFriendly ? 'text-success-teal' : 'text-error-rose'}>
-            {activity.toddlerFriendly ? 'Toddler-friendly' : 'Not for toddlers'}
-          </span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Icons.Pregnant size={16} className={activity.pregnancySafe ? 'text-success-teal' : 'text-warning-amber'} />
-          <span className={activity.pregnancySafe ? 'text-success-teal' : 'text-warning-amber'}>
-            {activity.pregnancySafe ? 'Pregnancy-safe' : 'Check restrictions'}
-          </span>
-        </div>
-      </div>
-
-      {/* Rating */}
-      {activity.rating && (
-        <div className="flex items-center gap-2 text-body-compact text-pale-ice">
-          <Icons.Star size={16} className="text-accent-blue fill-accent-blue" />
-          <span>{activity.rating}/5</span>
-          <span className="text-pale-ice opacity-70">({activity.reviewCount} reviews)</span>
-        </div>
-      )}
-
-      {/* Seasonal Notes */}
-      {activity.seasonalNotes && (
-        <div className="flex items-center gap-2 text-label text-warning-amber bg-warning-amber bg-opacity-10 px-2 py-1 rounded-subtle">
-          <Icons.Warning size={14} />
-          <span className="font-semibold">{activity.seasonalNotes}</span>
-        </div>
-      )}
-
-      {/* Actions */}
-      {(onMoreInfo || onAddToDay) && (
-        <div className="flex gap-2 pt-xs">
-          {onMoreInfo && (
-            <Button variant="secondary" onClick={() => onMoreInfo(activity)}>
-              More Info
-            </Button>
-          )}
-          {onAddToDay && (
-            <Button variant="primary" onClick={() => onAddToDay(activity)}>
-              <Icons.Plus size={16} />
-              Add to Day
-            </Button>
-          )}
-        </div>
-      )}
-    </Card>
+    </div>
   );
 };

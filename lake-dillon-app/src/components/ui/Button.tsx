@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'compact';
+export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'compact' | 'icon' | 'icon-small';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -15,19 +15,18 @@ export const Button: React.FC<ButtonProps> = ({
   as: Component = 'button',
   ...props
 }) => {
-  const baseStyles = 'transition-smooth touch-opacity flex items-center justify-center gap-2';
-
   const variants = {
     primary: 'btn-primary',
     secondary: 'btn-secondary',
-    danger: 'bg-error-rose text-frost-white h-button px-sm rounded-subtle text-button font-semibold',
-    success: 'bg-success-teal text-frost-white h-button px-sm rounded-subtle text-button font-semibold',
+    tertiary: 'btn-tertiary',
     compact: 'btn-compact btn-primary',
+    icon: 'btn-icon',
+    'icon-small': 'btn-icon btn-icon-small',
   };
 
   return (
     <Component
-      className={`${baseStyles} ${variants[variant]} ${className}`}
+      className={`${variants[variant]} ${className}`}
       {...(props as any)}
     >
       {children}

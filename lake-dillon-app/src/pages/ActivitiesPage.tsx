@@ -121,12 +121,12 @@ export const ActivitiesPage: React.FC = () => {
         </div>
 
         {/* Results Count */}
-        <div className="text-body text-pale-ice">
+        <div className="text-metadata px-lg">
           {filteredActivities.length} {filteredActivities.length === 1 ? 'activity' : 'activities'} found
         </div>
 
-        {/* Activities List */}
-        <div className="space-y-md">
+        {/* Activities List - Borderless */}
+        <div className="-mx-lg">
           {filteredActivities.map((activity) => (
             <ActivityCard
               key={activity.id}
@@ -138,9 +138,9 @@ export const ActivitiesPage: React.FC = () => {
         </div>
 
         {filteredActivities.length === 0 && (
-          <div className="text-center py-xl text-pale-ice">
-            <p className="text-h3 mb-2">No activities found</p>
-            <p className="text-body">Try adjusting your filters</p>
+          <div className="text-center py-xl">
+            <p className="text-h3 text-frost-white mb-2">No activities found</p>
+            <p className="text-body-secondary">Try adjusting your filters</p>
           </div>
         )}
       </div>

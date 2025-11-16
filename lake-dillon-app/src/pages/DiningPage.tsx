@@ -149,12 +149,12 @@ export const DiningPage: React.FC = () => {
         </div>
 
         {/* Results Count */}
-        <div className="text-body text-pale-ice">
+        <div className="text-metadata px-lg">
           {filteredRestaurants.length} {filteredRestaurants.length === 1 ? 'restaurant' : 'restaurants'} found
         </div>
 
-        {/* Restaurants List */}
-        <div className="space-y-md">
+        {/* Restaurants List - Borderless */}
+        <div className="-mx-lg">
           {filteredRestaurants.map((restaurant) => (
             <RestaurantCard
               key={restaurant.id}
@@ -166,9 +166,9 @@ export const DiningPage: React.FC = () => {
         </div>
 
         {filteredRestaurants.length === 0 && (
-          <div className="text-center py-xl text-pale-ice">
-            <p className="text-h3 mb-2">No restaurants found</p>
-            <p className="text-body">Try adjusting your filters</p>
+          <div className="text-center py-xl">
+            <p className="text-h3 text-frost-white mb-2">No restaurants found</p>
+            <p className="text-body-secondary">Try adjusting your filters</p>
           </div>
         )}
       </div>

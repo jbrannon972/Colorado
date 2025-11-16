@@ -41,15 +41,15 @@ export const DatePicker: React.FC<DatePickerProps> = ({ dates, selectedIndex, on
       {/* Date Selector Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full bg-icy-blue bg-opacity-40 border border-pale-ice border-opacity-20 rounded-subtle p-md flex items-center justify-between transition-smooth touch-opacity"
+        className="w-full card p-lg flex items-center justify-between transition-spring touch-scale"
       >
         <div className="flex items-center gap-3">
-          <div className="bg-accent-blue bg-opacity-20 rounded-subtle p-2">
+          <div className="bg-accent-blue bg-opacity-15 rounded-subtle p-2">
             <Icons.Calendar size={20} className="text-accent-blue" />
           </div>
           <div className="text-left">
             <p className="text-h3 text-frost-white">{selectedDate.dayName}</p>
-            <p className="text-body-compact text-pale-ice">
+            <p className="text-metadata">
               {dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
             </p>
           </div>
