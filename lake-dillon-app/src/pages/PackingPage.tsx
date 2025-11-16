@@ -13,6 +13,7 @@ export const PackingPage: React.FC = () => {
   const [newItemName, setNewItemName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<PackingItem['category']>('Other');
   const [isLoading, setIsLoading] = useState(true);
+  const [showCheckedItems, setShowCheckedItems] = useState(false);
 
   const categories: PackingItem['category'][] = [
     'Clothing',
@@ -106,8 +107,13 @@ export const PackingPage: React.FC = () => {
   const totalCount = currentItems.length;
   const progressPercentage = totalCount > 0 ? Math.round((packedCount / totalCount) * 100) : 0;
 
+  // Filter items based on visibility toggle
+  const visibleItems = showCheckedItems
+    ? currentItems
+    : currentItems.filter((item) => !item.packed);
+
   // Group items by category
-  const itemsByCategory = currentItems.reduce((acc, item) => {
+  const itemsByCategory = visibleItems.reduce((acc, item) => {
     if (!acc[item.category]) acc[item.category] = [];
     acc[item.category].push(item);
     return acc;
@@ -159,9 +165,28 @@ export const PackingPage: React.FC = () => {
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
-          <p className="text-body-compact text-pale-ice">
-            {packedCount} of {totalCount} items packed
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-body-compact text-pale-ice">
+              {packedCount} of {totalCount} items packed
+            </p>
+            <Button
+              variant={showCheckedItems ? 'secondary' : 'primary'}
+              onClick={() => setShowCheckedItems(!showCheckedItems)}
+              className="text-body-compact"
+            >
+              {showCheckedItems ? (
+                <>
+                  <Icons.CheckCircle size={14} />
+                  <span>Hide Checked</span>
+                </>
+              ) : (
+                <>
+                  <Icons.CheckCircle size={14} />
+                  <span>Show Checked ({packedCount})</span>
+                </>
+              )}
+            </Button>
+          </div>
         </Card>
 
         {/* Add Custom Item */}
