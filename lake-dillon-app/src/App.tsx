@@ -8,6 +8,7 @@ import { GalleryPage } from './pages/GalleryPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { PWAInstallPrompt } from './components/features/PWAInstallPrompt';
 import { PWAUpdatePrompt } from './components/features/PWAUpdatePrompt';
+import { FloatingCameraButton } from './components/features/FloatingCameraButton';
 
 function App() {
   return (
@@ -21,6 +22,9 @@ function App() {
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Routes>
+
+      {/* Global Features */}
+      <FloatingCameraButton />
 
       {/* PWA Prompts */}
       <PWAInstallPrompt />
