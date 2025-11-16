@@ -231,17 +231,17 @@ export const PackingPage: React.FC = () => {
                   {items.map((item) => (
                     <div
                       key={item.id}
-                      className="list-item flex items-center gap-3"
+                      className="list-item flex flex-row items-center gap-3"
                     >
                       <button
                         onClick={() => togglePacked(item.id)}
-                        className={`flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-spring ${
+                        className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-spring ${
                           item.packed
                             ? 'bg-accent-blue border-accent-blue'
                             : 'border-pale-ice border-opacity-40'
                         }`}
                       >
-                        {item.packed && <Icons.Check size={16} className="text-frost-white" />}
+                        {item.packed && <Icons.Check size={12} className="text-frost-white" />}
                       </button>
                       <span
                         className={`flex-1 text-body transition-all ${
