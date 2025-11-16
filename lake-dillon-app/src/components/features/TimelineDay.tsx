@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { DayTimeline, TimeSlotType } from '../../types';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { Card, Button, Icons, Toast } from '../ui';
@@ -40,6 +40,11 @@ export const TimelineDay: React.FC<TimelineDayProps> = ({
 }) => {
   const [localDay, setLocalDay] = useState(day);
   const [deletedItem, setDeletedItem] = useState<DeletedItem | null>(null);
+
+  // Sync local state when parent day prop changes
+  useEffect(() => {
+    setLocalDay(day);
+  }, [day]);
 
   const handleDeleteActivity = (slotType: TimeSlotType, activityId: string) => {
     const slot = localDay.timeSlots[slotType];
