@@ -226,19 +226,19 @@ export const PackingPage: React.FC = () => {
 
             return (
               <div key={category}>
-                <h3 className="text-h2 text-frost-white px-lg mb-md">{category}</h3>
-                <div className="-mx-lg">
+                <h3 className="text-h2 text-frost-white mb-sm">{category}</h3>
+                <div className="space-y-xs">
                   {items.map((item) => (
                     <div
                       key={item.id}
-                      className="list-item flex flex-row items-center gap-3"
+                      className="flex items-center gap-3 py-sm"
                     >
                       <button
                         onClick={() => togglePacked(item.id)}
-                        className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-spring ${
+                        className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
                           item.packed
                             ? 'bg-accent-blue border-accent-blue'
-                            : 'border-pale-ice border-opacity-40'
+                            : 'border-pale-ice border-opacity-30 hover:border-opacity-50'
                         }`}
                       >
                         {item.packed && <Icons.Check size={12} className="text-frost-white" />}
@@ -255,7 +255,7 @@ export const PackingPage: React.FC = () => {
                       {!item.isDefault && (
                         <button
                           onClick={() => deleteItem(item.id)}
-                          className="btn-icon-small text-pale-ice"
+                          className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-pale-ice hover:text-error-rose transition-colors rounded"
                         >
                           <Icons.Trash size={16} />
                         </button>
