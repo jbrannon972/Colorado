@@ -66,7 +66,7 @@ export const useTimeline = () => {
           id: `${activityId}-${Date.now()}`,
           activityId,
           addedAt: Date.now(),
-          notes,
+          ...(notes ? { notes } : {}),
         };
 
         return {
@@ -98,11 +98,11 @@ export const useTimeline = () => {
           id: `meal-${Date.now()}`,
           type: meal.type || 'snack',
           participants: meal.participants || [],
-          restaurantId: meal.restaurantId,
-          customMeal: meal.customMeal,
-          reservationRequired: meal.reservationRequired,
-          reservationTime: meal.reservationTime,
-          reservationConfirmed: meal.reservationConfirmed,
+          ...(meal.restaurantId ? { restaurantId: meal.restaurantId } : {}),
+          ...(meal.customMeal ? { customMeal: meal.customMeal } : {}),
+          ...(meal.reservationRequired !== undefined ? { reservationRequired: meal.reservationRequired } : {}),
+          ...(meal.reservationTime ? { reservationTime: meal.reservationTime } : {}),
+          ...(meal.reservationConfirmed !== undefined ? { reservationConfirmed: meal.reservationConfirmed } : {}),
         };
 
         return {
