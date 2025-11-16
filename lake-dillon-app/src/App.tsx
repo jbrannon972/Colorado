@@ -6,6 +6,8 @@ import { PackingPage } from './pages/PackingPage';
 import { FamilyPage } from './pages/FamilyPage';
 import { GalleryPage } from './pages/GalleryPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { PWAInstallPrompt } from './components/features/PWAInstallPrompt';
+import { PWAUpdatePrompt } from './components/features/PWAUpdatePrompt';
 
 function App() {
   return (
@@ -19,6 +21,10 @@ function App() {
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Routes>
+
+      {/* PWA Prompts */}
+      <PWAInstallPrompt />
+      <PWAUpdatePrompt />
     </BrowserRouter>
   );
 }
