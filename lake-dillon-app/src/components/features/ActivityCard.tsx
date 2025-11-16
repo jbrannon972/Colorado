@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Activity } from '../../types';
-import { Button, Icons, AddressLink } from '../ui';
+import { Button, Icons } from '../ui';
 
 interface ActivityCardProps {
   activity: Activity;
